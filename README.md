@@ -37,4 +37,4 @@ Save the estimated parameters for use in modeling the impact of interventions
 This step uses the R scripts in the "Interventions" folder. intervention_models.R is the function that runs the ODEs (with compartments for vaccination in seniors and monoclonal antibodies in infants). intervention_scenarios.R uses the parameters from Step 2 and estimates the impact of interventions under different scenarios for intervention coverage, effectiveness, and timing. Sample scenarios are provided but these can be modified to answer your research questions. 
 
 ### Notes on interventions 
-The model assumes that interventions are providing protection against severe disease (hospitalization) but not against infection. The model also assumes that the interventions do not impact an individuals infectiousness if they become infected. 
+The model assumes that interventions are providing protection against severe disease (hospitalization) but not against infection. The model also assumes that the interventions do not impact an individual's infectiousness if they become infected. 
