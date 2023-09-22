@@ -27,14 +27,14 @@ The model fits 8 parameters:
  - The amplitude of seasonal forcing
  - The timing/phase of seasonal forcing
  - The duration of transplacental immunity
+ - The relative risk of hospitalization among infants protected by transplacental immunity
  - The number of weekly external introductions of infection (seeding)
  - The proportion of infections leading to a reported RSV hospitalization in seniors
    - The proportion of infections leading to hospitalizations in the 1-4yrs age group is set to the same value (van Boven et al. "Estimating Transmission Parameters for Respiratory Syncytial Virus and Predicting the Impact of Maternal and Pediatric Vaccination." JID. 2020.)
    - The proportion of infections leading to hospitalizations in the 5-64 yrs age group is .06 times the proportion in adults 65+ yrs, based on influenza (Biggerstaff et al. "Estimating the Potential Effects of a Vaccine Program Against an Emerging Influenza Pandemic—United States." CID. 2015.)
  - The proportion of infections leading to a reported RSV hospitalization in infants <2 months
- - --The proportion of infections in older infants is set relative to the <2 months based on the paper by Zheng et al referenced at the top of this document.
- - The relative risk of hospitalization among infants protected by transplacental immunity
-
+   - The proportion of infections in older infants is set relative to the <2 months based on the paper by Zheng et al referenced at the top of this document.
+  
 Save the estimated parameters for use in modeling the impact of interventions
 
 # Step 3 - Model the Impact of Interventions 
