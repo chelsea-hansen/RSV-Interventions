@@ -5,7 +5,7 @@ Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotempo
 
 Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
 # Model Structure 
-![RSV model diagram](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/660d87ab-edc5-460f-9ad8-569377c5e63a)
+![RSV model diagram](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/2cf4a0d5-c478-4386-8653-8eefb7c645a5)
 
 # Step 1 - Data Requirements 
 The data needed to run the model can be found in the Data folder. Example datasets have been provided where possible. Where data is not publicly available "dummy" datasets have been provided to demonstrate the structure of the data. Simulated data may be provided in the future
