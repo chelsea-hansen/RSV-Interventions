@@ -184,8 +184,9 @@ interventions = function(birth_dose, #timing and coverage of nirsevimab birth do
   H1=matrix(0,nrow=t0,ncol=al)#Number of hospitalizations by age
   for (i in 1:al){
     H1[,i]=RRHm*hosp[i]*M[,i]*lambda1[,i]+
-      RRHn*RRHm*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+ #note, this is adding nirsevimab impact on top of maternal immunity (may be too high?)
-      RRHn*RRHm*hosp[i]*RRIn*N[,i]*lambda1[,i]+ # see note above 
+      RRHn*RRHm*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+ #note, this is adding nirsevimab impact on top of maternal immunity (might be too high?)
+      #RRHn*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+ #alternative approach is to add nirsevimab impact on it's own
+       RRHn*RRHm*hosp[i]*RRIn*N[,i]*lambda1[,i]+ # see note above 
       hosp[i]*S0[,i]*lambda1[,i]+
       hosp[i]*parmset$sigma1*S1[,i]*lambda1[,i]+
       hosp[i]*parmset$sigma2*S2[,i]*lambda1[,i]+
@@ -722,29 +723,31 @@ point_estimates = rbind(no_interventions %>% mutate(interventions = "None"),
                         optimistic_interventions %>% mutate(interventions = "Optimistic"),
                         optimistic_interventions_4m %>% mutate(interventions = "Optimistic (4m)")
 )
- 
+ write.csv(point_estimates, "point_estimates.csv")
   point_estimates_totals = rbind(no_intervention_totals %>% mutate(interventions = "None"),
                           realistic_intervention_totals %>% mutate(interventions = "Realistic"),
                           optimistic_intervention_totals %>% mutate(interventions = "Optimistic"),
                           optimistic_intervention_totals_4m %>% mutate(interventions = "Optimistic (4m)")
   )
-
+  write.csv(point_estimates_totals, "point_estimates_totals.csv")
   
-  projection_intrevals = rbind(no_interventions_PI %>% mutate(interventions = "None"),
+  projection_intervals = rbind(no_interventions_PI %>% mutate(interventions = "None"),
                           realistic_interventions_PI %>% mutate(interventions = "Realistic"),
                           optimistic_interventions_PI %>% mutate(interventions = "Optimistic"),
                           optimistic_interventions_PI_4m %>% mutate(interventions = "Optimistic (4m)")
   )
-
-  projection_intrevals_timeseries = rbind(no_interventions_timeseries %>% mutate(interventions = "None"),
+  write.csv(projection_intervals, "projection_intervals.csv")
+  
+  projection_intervals_timeseries = rbind(no_interventions_timeseries %>% mutate(interventions = "None"),
                                realistic_interventions_timeseries %>% mutate(interventions = "Realistic"),
                                optimistic_interventions_timeseries %>% mutate(interventions = "Optimistic"),
                                optimistic_interventions_timeseries_4m %>% mutate(interventions = "Optimistic (4m)")
   )
-  
-  projection_intrevals_sum = rbind(no_interventions_sum %>% mutate(interventions = "None"),
+  write.csv(projection_intrevals_timeseries, "projection_intervals_timeseries.csv")
+  projection_intervals_sum = rbind(no_interventions_sum %>% mutate(interventions = "None"),
                                           realistic_interventions_sum %>% mutate(interventions = "Realistic"),
                                           optimistic_interventions_sum %>% mutate(interventions = "Optimistic"),
                                           optimistic_interventions_sum_4m %>% mutate(interventions = "Optimistic (4m)")
   )
+  write.csv(projection_intrevals_sum, "projection_intervals_sum.csv")
   
