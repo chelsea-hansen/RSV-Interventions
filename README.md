@@ -1,4 +1,4 @@
-# Acknowledgement
+# Acknowledgment
 This model buildings on earlier work, please see:
 
 Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotemporal Dynamics of Respiratory Syncytial Virus in the United States". PLOS Pathogens. 2015. https://doi.org/10.1371/journal.ppat.1004591
