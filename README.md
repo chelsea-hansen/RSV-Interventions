@@ -8,7 +8,7 @@ Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and exte
 ![RSV model diagram](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/2cf4a0d5-c478-4386-8653-8eefb7c645a5)
 
 # Step 1 - Data Requirements 
-The data needed to run the model can be found in the Data folder. The model has been fit using data from the ESSENCE system, but other data sets could also be used. Example datasets from King County, Washington are provided.
+The data needed to run the model can be found in the Data folder. The model has been fit using RSV-coded hospitalizations and emergency department (ED) visits collected through the ESSENCE system, but other data sets could also be used. Example datasets from King County, Washington are provided.
 ### yinit
 This dataset is what you will use to initiate the burn-in for the model. The 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-64y, 65+y) are divided into the model compartments based on the age distribution and size of the population when you are starting your burn-in period. This assumes the age distribution in the population is relatively stable over time. You seed 1 infection in each age group >6 months. Note - some of the middle age groups are collapsed later in the code (becoming 1-4y and 5-64y). 
 ### birth 
@@ -16,7 +16,7 @@ This dataset is the birth rate per 1000 population for each week you will be run
 ### contact 
 This model uses the contact martix from the POLYMOD study (Mossong et al. 2008. "Social Contacts and Mixing Patterns Relevant to the Spread of Infectious Diseases." PLOS Medicine. https://doi.org/10.1371/journal.pmed.0050074.) The contact matrix has been aggregated to match the age groups used in this model. 
 ### rsv_ts
-This is a weekly count of RSV-coded hospitalizations (and optionally, ED visits) for all age groups combined. Values from 1-9 have been suppressed and are interpolated. It is recommended to have at least 3 years of data prior to the COVID-19 pandemic, more years of data is better. 
+This is a weekly count of RSV-coded hospitalizations (and optionally, ED visits) for all age groups combined. Values from 1-9 have been suppressed and are interpolated. It is recommended to have at least 3 years of data prior to the COVID-19 pandemic, but more years of data is better. 
 ### age_distribution
 This is the proporiton of RSV-coded hospitalizations (and optionally, ED visits) in each age group (with middle age groups collapsed in to 1-4yrs and 5-64yrs). The proportions are separated into the pre-pandemic time period (pre-March 2020) and the post-pandemic (post-March 2020) time period. 
 ### scale_ed_to_hosp (optional)
@@ -29,7 +29,7 @@ The model fits 8 parameters:
  - The amplitude of seasonal forcing
  - The timing/phase of seasonal forcing
  - The duration of transplacental immunity
- - The relative risk of hospitalization among infants protected by transplacental immunity
+ - The relative risk of hospitalization given infection among infants protected by transplacental immunity
  - The number of weekly external introductions of infection (seeding)
  - The proportion of infections leading to a reported RSV hospitalization in seniors
    - The proportion of infections leading to hospitalizations in the 1-4yrs age group is set to the same value as the proportion in adults 65+ yrs (van Boven et al. "Estimating Transmission Parameters for Respiratory Syncytial Virus and Predicting the Impact of Maternal and Pediatric Vaccination." JID. 2020.)
@@ -46,4 +46,4 @@ This step uses the R scripts in the "Interventions" folder. intervention_models.
 The model assumes that interventions are providing protection against severe disease (hospitalization) but not against infection. The model also assumes that the interventions do not impact an individual's infectiousness if they become infected. 
 
 ### Notes on fitting to the pandemic period 
-The interventions model uses the model parameters fit during the pre-pandemic period and then projects forward. To account for distruptions during the COVID-19 pandemic we reduced the baseline transmission rate (beta) by 25% from April - June 2020 (representing the stay-at-home order) and then allowed beta to increase linearly to pre-pandemic levels between July 2020 and March 2021. We included an additional 25% beta reduction from mid-December 2021 through February 2022 to account for the emergence of the Omicron BA.1 variant. We did this because it is likely that people adopted protective measures during this time, reducing RSV transmission. Furthermore, it is also possible that viral interactions may have resulted in a decline in RSV transmission during this period. Together with these reductions in beta, we reduced imported infections to zero from April 2020 - January 2021 and allowed for a linear increase to normal levels between February 2021 - May 2021. This approach is based on the paper by Zheng et al. "Estimation of the Timing and Intensity of Reemergence of Respiratory Syncytial Virus Following the COVID-19 Pandemic in the US." JAMA Netw Open. 2021. 
+The interventions model uses the model parameters fit during the pre-pandemic period and then projects forward. To account for distruptions during the COVID-19 pandemic we reduced the baseline transmission rate (beta) by 25% from April - June 2020 (representing the stay-at-home order) and then allowed beta to increase linearly to pre-pandemic levels between July 2020 and March 2021. We included an additional 25% beta reduction from mid-December 2021 through February 2022 to account for the emergence of the Omicron BA.1 variant. We did this because it is likely that people adopted protective measures during this time, reducing RSV transmission. Furthermore, it is also possible that viral interactions may have resulted in a decline in RSV transmission during this period. Together with these reductions in beta, we reduced imported infections (seeding) to zero from April 2020 - January 2021 and allowed for a linear increase to normal levels between February 2021 - May 2021. This approach is based on the paper by Zheng et al. "Estimation of the Timing and Intensity of Reemergence of Respiratory Syncytial Virus Following the COVID-19 Pandemic in the US." JAMA Netw Open. 2021. 
