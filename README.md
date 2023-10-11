@@ -8,18 +8,18 @@ Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and exte
 ![RSV model diagram](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/2cf4a0d5-c478-4386-8653-8eefb7c645a5)
 
 # Step 1 - Data Requirements 
-The data needed to run the model can be found in the Data folder. Example datasets have been provided where possible. Where data is not publicly available "dummy" datasets have been provided to demonstrate the structure of the data. Simulated data may be provided in the future
+The data needed to run the model can be found in the Data folder. The model has been fit using data from the ESSENCE system, but other data sets could also be used. Example datasets from King County, Washington are provided.
 ### yinit
 This dataset is what you will use to initiate the burn-in for the model. The 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-64y, 65+y) are divided into the model compartments based on the age distribution and size of the population when you are starting your burn-in period. This assumes the age distribution in the population is relatively stable over time. You seed 1 infection in each age group >6 months. Note - some of the middle age groups are collapsed later in the code (becoming 1-4y and 5-64y). 
 ### birth 
 This dataset is the birth rate per 1000 population for each week you will be running the model (from initiation of burn-in to projections). You can use the annual birth rate for each week or set the first week of the year to the annual birth rate and interpolate missing weeks between years. Later in the code this will be divided by 52.17 to convert from an annual to a weekly scale. Note, there is a column for each age group but only the first column (infants <2m) has data. The other columns are set to zero. 
 ### contact 
 This model uses the contact martix from the POLYMOD study (Mossong et al. 2008. "Social Contacts and Mixing Patterns Relevant to the Spread of Infectious Diseases." PLOS Medicine. https://doi.org/10.1371/journal.pmed.0050074.) The contact matrix has been aggregated to match the age groups used in this model. 
-### rsv_ts_dummy
-This is a weekly count of RSV-coded hospitalizations (and optionally, ED visits) for all age groups combined. These data are not publicly available so a "dummy" dataset has been provided as a formatting example. (Simulated data may be provided in the future). It is recommended to have at least 3 years of data prior to the COVID-19 pandemic, more data is better. 
-### age_distribution_dummy
+### rsv_ts
+This is a weekly count of RSV-coded hospitalizations (and optionally, ED visits) for all age groups combined. Values from 1-9 have been suppressed and are interpolated. It is recommended to have at least 3 years of data prior to the COVID-19 pandemic, more years of data is better. 
+### age_distribution
 This is the proporiton of RSV-coded hospitalizations (and optionally, ED visits) in each age group (with middle age groups collapsed in to 1-4yrs and 5-64yrs). The proportions are separated into the pre-pandemic time period (pre-March 2020) and the post-pandemic (post-March 2020) time period. 
-### scale_ed_to_hosp_dummy (optional)
+### scale_ed_to_hosp (optional)
 The model is calibrated to RSV-coded hospitalizations. This dataset is used to scale hospitalizations to ED visits using the ratio of hospitalizations to ED visits in each age group during the pre- and post- pandemic time periods. This dataset is only necessary if you would like to produce estimates for ED visits in addition to hospitalizations. 
 
 # Step 2 - Parameter Estimation 
