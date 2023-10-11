@@ -8,6 +8,8 @@ library(ggplot2)
 library(cowplot)
 library(sjstats)
 library(cdcfluview)
+library(zoo)
+library(imputeTS)
 
 "%notin%" = Negate('%in%')
 
@@ -38,14 +40,18 @@ contact <- readRDS('Data/contact_POLYMOD.rds')
 #proportion of hospitalizations in each age group 
 #data not available to be shared - see "dummy" version for general structure 
 #wa_agedist = readRDS('Data/age_distribution_dummy.rds')
-wa_agedist <- readRDS('Data/age_distribution.rds') %>% arrange(age)
+wa_agedist <- readRDS('Data/age_distributions.rds') %>% arrange(age)
 wa_agedist <- as.matrix(subset(wa_agedist, period=="pre-pandemic",select=c("prop_hosp")))
 
 
 #weekly time series of RSV hospitalizations (all ages) 
 #data not publicly available, see dummy version for structure 
+#values between 1 and 9 have been supressed and are interpolated 
+
 rsv_pre = readRDS('Data/rsv_ts.rds') %>% 
-  filter(date<='2020-03-28') %>% 
+  mutate(hrsv_smooth = round(rollmean(na_interpolation(hosp_rsv_adj), k=3, align="center",fill=NA)),
+         ersv_smooth = round(rollmean(na_interpolation(ed_rsv_adj), k=3, align="center",fill=NA))) %>% 
+  filter(!is.na(hrsv_smooth),date<='2020-03-28') %>% 
   select(date, rsvH=hrsv_smooth, rsvED=ersv_smooth)
 
 
@@ -324,7 +330,7 @@ plot1_ed
 
 #ED age distribution 
 age_dist_ed2 = age_dist_ed %>% select(age_dist, age) %>% mutate(data="model")
-wa_agedist3 = wa_agedist <- readRDS('Data/age_distribution.rds') %>% 
+wa_agedist3 = wa_agedist <- readRDS('Data/age_distributions.rds') %>% 
   arrange(age) %>% 
   filter(period=="pre-pandemic") %>% 
   select(age_dist = prop_ed) %>% 
