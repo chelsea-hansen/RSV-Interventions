@@ -12,7 +12,7 @@ Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and exte
 ![RSV model diagram](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/0c3c3b70-e07e-403a-b2e8-8981ef48c1ad)
 
 # Step 1 - Data Requirements 
-The data needed to run the model can be found in the Data folder. The model has been fit using RSV-coded hospitalizations and emergency department (ED) visits collected through the ESSENCE system, but other data sets could also be used. Example datasets from King County, Washington are provided.
+This model is intended to project the impact of new RSV interventions (vaccines for older adults and extended half-live monoclonals for infants) on RSV hospitalizations. The data needed to run the model can be found in the Data folder. The model has been fit using RSV-coded hospitalizations and emergency department (ED) visits collected through the ESSENCE system, but other data sets could also be used. Example datasets from King County, Washington are provided.
 ### yinit
 This dataset is what you will use to initiate the burn-in for the model. The 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-64y, 65+y) are divided into the model compartments based on the age distribution and size of the population when you are starting your burn-in period. This assumes the age distribution in the population is relatively stable over time. You seed 1 infection in each age group >6 months. Note - some of the middle age groups are collapsed later in the code (becoming 1-4y and 5-64y). 
 ### birth 
