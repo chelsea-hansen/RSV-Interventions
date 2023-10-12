@@ -20,7 +20,7 @@ This dataset is the birth rate per 1000 population for each week you will be run
 ### contact 
 This model uses the contact martix from the POLYMOD study (Mossong et al. 2008. "Social Contacts and Mixing Patterns Relevant to the Spread of Infectious Diseases." PLOS Medicine. https://doi.org/10.1371/journal.pmed.0050074.) The contact matrix has been aggregated to match the age groups used in this model. 
 ### rsv_ts
-This is a weekly count of RSV-coded hospitalizations (and optionally, ED visits) for all age groups combined. Values from 1-9 have been suppressed and are interpolated. It is recommended to have at least 3 years of data prior to the COVID-19 pandemic, but more years of data is better. 
+This is a weekly count of RSV-coded hospitalizations (and optionally, ED visits) for all age groups combined. Values from 1-9 in the sample dataset have been suppressed and are interpolated. It is recommended to have at least 3 years of data prior to the COVID-19 pandemic, but more years of data is better. 
 ### age_distribution
 This is the proporiton of RSV-coded hospitalizations (and optionally, ED visits) in each age group (with middle age groups collapsed in to 1-4yrs and 5-64yrs). The proportions are separated into the pre-pandemic time period (pre-March 2020) and the post-pandemic (post-March 2020) time period. 
 ### scale_ed_to_hosp (optional)
