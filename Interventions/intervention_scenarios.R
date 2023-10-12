@@ -184,9 +184,8 @@ interventions = function(birth_dose, #timing and coverage of nirsevimab birth do
   H1=matrix(0,nrow=t0,ncol=al)#Number of hospitalizations by age
   for (i in 1:al){
     H1[,i]=RRHm*hosp[i]*M[,i]*lambda1[,i]+
-      RRHn*RRHm*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+ #note, this is adding nirsevimab impact on top of maternal immunity (might be too high?)
-      #RRHn*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+ #alternative approach is to add nirsevimab impact on it's own
-       RRHn*RRHm*hosp[i]*RRIn*N[,i]*lambda1[,i]+ # see note above 
+      RRHn*((RRHm*2)/3)*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+ #note, maternal protection is weighted to reflect that 1/3 of infants in this compartment are still protected by maternal immunity (nirsevimab is added to this protection)
+      RRHn*hosp[i]*RRIn*N[,i]*lambda1[,i]+  
       hosp[i]*S0[,i]*lambda1[,i]+
       hosp[i]*parmset$sigma1*S1[,i]*lambda1[,i]+
       hosp[i]*parmset$sigma2*S2[,i]*lambda1[,i]+
@@ -307,8 +306,8 @@ interventions_PI = function(birth_dose, cover_n, waningN,RRIn, RRHn,
     H1=matrix(0,nrow=t0,ncol=al)#Number of hospitalizations by age
     for (i in 1:al){
       H1[,i]=RRHm*hosp[i]*M[,i]*lambda1[,i]+
-        RRHn*RRHm*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+
-        RRHn*RRHm*hosp[i]*RRIn*N[,i]*lambda1[,i]+
+        RRHn*((RRHm+2)/3)*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+#note, maternal protection is weighted to reflect that 1/3 of infants in this compartment are still protected by maternal immunity (nirsevimab is added to this protection)
+        RRHn*hosp[i]*RRIn*N[,i]*lambda1[,i]+
         hosp[i]*S0[,i]*lambda1[,i]+
         hosp[i]*parmset$sigma1*S1[,i]*lambda1[,i]+
         hosp[i]*parmset$sigma2*S2[,i]*lambda1[,i]+
@@ -443,8 +442,8 @@ hosp = c(report_infants, report_infants*0.59, report_infants*0.33, report_infant
 H1=matrix(0,nrow=t0,ncol=al)#Number of hospitalizations by age
 for (i in 1:al){
   H1[,i]=RRHm*hosp[i]*M[,i]*lambda1[,i]+
-    RRHn*RRHm*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+
-    RRHn*RRHm*hosp[i]*RRIn*N[,i]*lambda1[,i]+
+    RRHn*((RRHm+2)/3)*hosp[i]*RRIn*Mn[,i]*lambda1[,i]+#note, maternal protection is weighted to reflect that 1/3 of infants in this compartment are still protected by maternal immunity (nirsevimab is added to this protection)
+    RRHn*hosp[i]*RRIn*N[,i]*lambda1[,i]+
     hosp[i]*S0[,i]*lambda1[,i]+
     hosp[i]*parmset$sigma1*S1[,i]*lambda1[,i]+
     hosp[i]*parmset$sigma2*S2[,i]*lambda1[,i]+
@@ -480,9 +479,9 @@ projection_intervals = rbind(projection_intervals, estimates)
 # flu curves for  to base timing of vaccination (from Flu Scenario Modeling Hub) --------------------
 # flu curves give timing, scale them down to match the level of coverage for scenarios 
 
-#seniors 
+#timing of senior vaccines 
+#76% cumulative coverage
 senior_vaccination = read_csv("https://raw.githubusercontent.com/midas-network/flu-scenario-modeling-hub_resources/main/Rd2_datasets/Age_Specific_Coverage_Flu_RD2_2022_23_Sc_A_B_C_D.csv") %>% 
-#senior_vaccination = read_csv("https://raw.githubusercontent.com/midas-network/flu-scenario-modeling-hub_resources/main/Rd4_datasets/Age_Specific_Coverage_Flu_RD4_2023_24_Sc_A_B_C_D_E_F.csv") %>% 
   filter(Geography=="Washington", Age=="65+ Years") %>% 
   select("date"=Week_Ending_Sat, "flu_coverage"=flu.coverage.rd2.sc_A_B_C_D) %>% 
   mutate(flu_cov_cum = flu_coverage/100,
@@ -490,13 +489,14 @@ senior_vaccination = read_csv("https://raw.githubusercontent.com/midas-network/f
   replace(is.na(.),0)
 
 #timing of vaccination for catch-up vaccines (based on flu in 6mo-4yrs)
-#assuming catch-up doses end after December (#week 22)
-#64% cumulative coverage by end of Sep - scale for RSV coverage scenarios
+#75% cumulative coverage 
 child_vaccination = read_csv("https://raw.githubusercontent.com/midas-network/flu-scenario-modeling-hub_resources/main/Rd2_datasets/Age_Specific_Coverage_Flu_RD2_2022_23_Sc_A_B_C_D.csv") %>% 
   filter(Geography=="Washington", Age=="6 Months - 4 Years") %>% 
   select("date"=Week_Ending_Sat, "flu_coverage"=flu.coverage.rd2.sc_A_B_C_D) %>% 
   mutate(flu_cov_cum = flu_coverage/100,
-         flu_cov_week = flu_cov_cum - lag(flu_cov_cum,1)) %>% 
+         flu_cov_week = flu_cov_cum - lag(flu_cov_cum,1),
+         flu_lag_cum = lag(flu_cov_cum,7), #start coverage first week of October 
+         flu_lag_week = lag(flu_cov_week,7)) %>% 
   replace(is.na(.),0)
 
 
@@ -552,25 +552,33 @@ no_interventions_sum = no_interventions_PI %>% filter(lhs!="point estimate") %>%
 #timing of birth doses = October to March (6 months)
 
 
-#scaling 64% (flu coverage) to 50% for 2023-24 (*.78)
-#scaling 64% (flu coverage) to 75% for 2024-25 (*1.2)
-catch_up = c(rep(0,2274),child_vaccination$flu_cov_week[1:22]*.78,rep(0,30),child_vaccination$flu_cov_week[1:30]*1.2,rep(0,29),child_vaccination$flu_cov_week[1:9]*1.2)
-plot(catch_up[2284:2387])
+#scaling 75% (flu coverage) to 50% for 2023-24 (*.67)
+#scaling 75% (flu coverage) to 75% for 2024-25 (*1)
+catch_up.p = c(rep(0,2274),child_vaccination$flu_lag_week[1:44]*.67,rep(0,8),child_vaccination$flu_cov_week[1:44]*1,rep(0,8),child_vaccination$flu_cov_week[1:9]*1)
+catch_up.p_cum1 = cumsum(catch_up.p[2275:2327])
+plot(catch_up.p_cum1) #season 1
+catch_up.p_cum2 = cumsum(catch_up.p[2328:2379])
+plot(catch_up.p_cum2) #season 2
+
+#assumes coverage is the same every week (no ramp-up), administered October to March
+#alternative is to use the same coverage as the catch-up doses 
+birth_dose.p =c(rep(0,2283),rep(.5,26),rep(0,26),rep(.75,26),rep(0,26))
 
 #scaling 76% to 15% in both seasons (*.2)
-senior_vax = c(rep(0,2274),senior_vaccination$flu_cov_week*.2,rep(0,7),senior_vaccination$flu_cov_week*.2,rep(0,7),senior_vaccination$flu_cov_week[1:11]*.2)
-plot(senior_vax[2284:2387])
+senior_vax.p = c(rep(0,2274),senior_vaccination$flu_cov_week*.2,rep(0,8),senior_vaccination$flu_cov_week*.2,rep(0,8),senior_vaccination$flu_cov_week[1:9]*.2)
+senior_cum.p = cumsum(senior_vax.p[2275:2387])
+plot(senior_cum.p)
 
 
-realistic_interventions = interventions(birth_dose=c(rep(0,2283),rep(.5,26),rep(0,26),rep(.75,26),rep(0,26)), 
-                                        cover_n=catch_up, 
+realistic_interventions = interventions(birth_dose= birth_dose.p,
+                                        cover_n=catch_up.p, 
                                         waningN=180,
                                         RRIn=1, 
-                                        RRHn=.4, 
-                                        cover_s=senior_vax, 
+                                        RRHn=.4, #60% VE
+                                        cover_s=senior_vax.p, 
                                         waningS=730.5, 
                                         RRIs=1, 
-                                        RRHs=.3)
+                                        RRHs=.3) #70% VE
   
   
  
@@ -579,12 +587,12 @@ realistic_interventions = interventions(birth_dose=c(rep(0,2283),rep(.5,26),rep(
    summarize(hosp = sum(hosp))
  
  
- realistic_interventions_PI = interventions_PI(birth_dose=c(rep(0,2283),rep(.5,26),rep(0,26),rep(.75,26),rep(0,26)), 
-                                         cover_n=catch_up, 
+ realistic_interventions_PI = interventions_PI(birth_dose=birth_dose.p,
+                                         cover_n=catch_up.p, 
                                          waningN=180,
                                          RRIn=1, 
                                          RRHn=.4, 
-                                         cover_s=senior_vax, 
+                                         cover_s=senior_vax.p, 
                                          waningS=730.5, 
                                          RRIs=1, 
                                          RRHs=.3)
@@ -615,22 +623,32 @@ realistic_interventions = interventions(birth_dose=c(rep(0,2283),rep(.5,26),rep(
  #nirsevimab effectiveness = 80% 
  #timing of birth doses = October to March (6 months )
  
-  #scale 64% (flu coverage) to 78% for 2023-2024 (*1.2)
-  #scale 64% (flu coverage) to 90% for 2024-2025 (*1.4)
-  catch_up = c(rep(0,2274),child_vaccination$flu_cov_week[1:22]*1.2,rep(0,30),child_vaccination$flu_cov_week[1:22]*1.4,rep(0,30),child_vaccination$flu_cov_week[1:9]*1.4)
-  plot(catch_up[2284:2387])
+  #scale 75% (flu coverage) to 75% for 2023-2024 (*1)
+  #scale 75% (flu coverage) to 90% for 2024-2025 (*1.2)
+  catch_up.o = c(rep(0,2274),child_vaccination$flu_lag_week[1:44]*1,rep(0,8),child_vaccination$flu_cov_week[1:44]*1.2,rep(0,8),child_vaccination$flu_cov_week[1:9]*1.2)
+  catch_up.o_cum1 = cumsum(catch_up.o[2275:2327])
+  plot(catch_up.o_cum1) #season 1
+  catch_up.o_cum2 = cumsum(catch_up.o[2328:2379])
+  plot(catch_up.o_cum2) #season 2
+  
+  #assumes coverage is the same every week (no ramp-up), administered October to March 
+  #alternative is to use the same coverage as the catch-up doses 
+  birth_dose.o =c(rep(0,2283),rep(.75,26),rep(0,26),rep(.9,26),rep(0,26))
+  
   
   #scaling 76% (flu coverage) to 30% in both seasons (*.4)
-  senior_vax = c(rep(0,2274),senior_vaccination$flu_cov_week*.4,rep(0,7),senior_vaccination$flu_cov_week*.4,rep(0,7),senior_vaccination$flu_cov_week[1:11]*.4)
-  plot(senior_vax[2284:2387])
+  senior_vax.o = c(rep(0,2274),senior_vaccination$flu_cov_week*.4,rep(0,8),senior_vaccination$flu_cov_week*.4,rep(0,8),senior_vaccination$flu_cov_week[1:9]*.4)
+  senior_cum.o = cumsum(senior_vax.o[2275:2387])
+  plot(senior_cum.o)
   
   
-  optimistic_interventions = interventions(birth_dose=c(rep(0,2283),rep(.75,26),rep(0,26),rep(.9,26),rep(0,26)), 
-                                          cover_n=catch_up, 
+  
+  optimistic_interventions = interventions(birth_dose=birth_dose.o,
+                                          cover_n=catch_up.o, 
                                           waningN=180,
                                           RRIn=1, 
                                           RRHn=.2, 
-                                          cover_s=senior_vax, 
+                                          cover_s=senior_vax.o, 
                                           waningS=730.5, 
                                           RRIs=1, 
                                           RRHs=.1)
@@ -640,12 +658,12 @@ realistic_interventions = interventions(birth_dose=c(rep(0,2283),rep(.5,26),rep(
     group_by(age, season) %>% 
     summarize(hosp = sum(hosp))
   
-  optimistic_interventions_PI = interventions_PI(birth_dose=c(rep(0,2283),rep(.75,26),rep(0,26),rep(.9,26),rep(0,26)), 
-                                                cover_n=catch_up, 
+  optimistic_interventions_PI = interventions_PI(birth_dose=birth_dose.o,
+                                                cover_n=catch_up.o, 
                                                 waningN=180,
                                                 RRIn=1, 
                                                 RRHn=.2, 
-                                                cover_s=senior_vax, 
+                                                cover_s=senior_vax.o, 
                                                 waningS=730.5, 
                                                 RRIs=1, 
                                                 RRHs=.1)
@@ -668,86 +686,33 @@ realistic_interventions = interventions(birth_dose=c(rep(0,2283),rep(.5,26),rep(
               upper = quantile(hosp,probs=0.975))
 
 # Optimistic Scenario with different timing  ------------------------------
- #senior vaccination = 30% 
- #senior vaccine effectiveness = 90% 
  
- 
- #nirsevimab coverage = 75% (2023-24); 90% (2024-25)
- #nirsevimab effectiveness = 80% 
- #timing of birth doses = November to February (4 months )
-  
-  optimistic_interventions_4m = interventions(birth_dose=c(rep(0,2287),rep(.75,18),rep(0,34),rep(.9,18),rep(0,30)), 
-                                           cover_n=catch_up, 
-                                           waningN=180,
-                                           RRIn=1, 
-                                           RRHn=.2, 
-                                           cover_s=senior_vax, 
-                                           waningS=730.5, 
-                                           RRIs=1, 
-                                           RRHs=.1)
-  
-  optimistic_intervention_totals_4m = optimistic_interventions_4m %>% 
-    group_by(age, season) %>% 
-    summarize(hosp = sum(hosp))
-  
-  optimistic_interventions_PI_4m = interventions_PI(birth_dose=c(rep(0,2287),rep(.75,18),rep(0,34),rep(.9,18),rep(0,30)), 
-                                                 cover_n=catch_up, 
-                                                 waningN=180,
-                                                 RRIn=1, 
-                                                 RRHn=.2, 
-                                                 cover_s=senior_vax, 
-                                                 waningS=730.5, 
-                                                 RRIs=1, 
-                                                 RRHs=.1)
-  
-  optimistic_interventions_timeseries_4m = optimistic_interventions_PI_4m %>% filter(lhs!="point estimate") %>% 
-    group_by(age, date) %>% 
-    summarize(median = median(hosp),
-              lower = quantile(hosp,probs=0.025),
-              upper = quantile(hosp,probs=0.975))
-  
-  optimistic_interventions_sum_4m = optimistic_interventions_PI_4m %>% filter(lhs!="point estimate") %>% 
-    group_by(age, season, lhs) %>% 
-    summarize(hosp = sum(hosp)) %>% 
-    ungroup() %>% 
-    group_by(age, season) %>% 
-    summarize(median = median(hosp),
-              lower = quantile(hosp,probs=0.025),
-              upper = quantile(hosp,probs=0.975))
-  
-
 # Combine into single files  ----------------------------------------------
 
 point_estimates = rbind(no_interventions %>% mutate(interventions = "None"),
                         realistic_interventions %>% mutate(interventions = "Realistic"),
-                        optimistic_interventions %>% mutate(interventions = "Optimistic"),
-                        optimistic_interventions_4m %>% mutate(interventions = "Optimistic (4m)")
-)
+                        optimistic_interventions %>% mutate(interventions = "Optimistic"))
  write.csv(point_estimates, "point_estimates.csv")
-  point_estimates_totals = rbind(no_intervention_totals %>% mutate(interventions = "None"),
+
+ 
+point_estimates_totals = rbind(no_intervention_totals %>% mutate(interventions = "None"),
                           realistic_intervention_totals %>% mutate(interventions = "Realistic"),
-                          optimistic_intervention_totals %>% mutate(interventions = "Optimistic"),
-                          optimistic_intervention_totals_4m %>% mutate(interventions = "Optimistic (4m)")
-  )
+                          optimistic_intervention_totals %>% mutate(interventions = "Optimistic"))
   write.csv(point_estimates_totals, "point_estimates_totals.csv")
   
   projection_intervals = rbind(no_interventions_PI %>% mutate(interventions = "None"),
                           realistic_interventions_PI %>% mutate(interventions = "Realistic"),
-                          optimistic_interventions_PI %>% mutate(interventions = "Optimistic"),
-                          optimistic_interventions_PI_4m %>% mutate(interventions = "Optimistic (4m)")
-  )
+                          optimistic_interventions_PI %>% mutate(interventions = "Optimistic"))
   write.csv(projection_intervals, "projection_intervals.csv")
   
   projection_intervals_timeseries = rbind(no_interventions_timeseries %>% mutate(interventions = "None"),
                                realistic_interventions_timeseries %>% mutate(interventions = "Realistic"),
-                               optimistic_interventions_timeseries %>% mutate(interventions = "Optimistic"),
-                               optimistic_interventions_timeseries_4m %>% mutate(interventions = "Optimistic (4m)")
-  )
+                               optimistic_interventions_timeseries %>% mutate(interventions = "Optimistic"))
+  
   write.csv(projection_intrevals_timeseries, "projection_intervals_timeseries.csv")
+  
   projection_intervals_sum = rbind(no_interventions_sum %>% mutate(interventions = "None"),
                                           realistic_interventions_sum %>% mutate(interventions = "Realistic"),
-                                          optimistic_interventions_sum %>% mutate(interventions = "Optimistic"),
-                                          optimistic_interventions_sum_4m %>% mutate(interventions = "Optimistic (4m)")
-  )
+                                          optimistic_interventions_sum %>% mutate(interventions = "Optimistic"))
   write.csv(projection_intrevals_sum, "projection_intervals_sum.csv")
   
