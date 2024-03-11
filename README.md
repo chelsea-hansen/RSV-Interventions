@@ -20,7 +20,7 @@ The model assumes that all infants are born into an "M" compartment (representin
 |*Relative risk of infection following second infection (&sigma;2)|0.6|
 |*Relative risk of infection following third or later infection (1/&sigma;3)|0.4|
 |Relative risk of infection with maternal immunity (1/&sigma;3)|0.4|
-|Relative risk of hospitalization given infection with maternal immunity|0.7|
+|Relative risk of hospitalization given infection for M compartment|0.7|
 |*Duration of maternal immunity (1/&omega;1)|112 days|
 |Duration of immunity following first and second infections (1/&omega;2)|182.625 days|
 |Duration of immunity following third or later infections (1/&omega;3)|365.25 days|
@@ -32,12 +32,18 @@ The model assumes that all infants are born into an "M" compartment (representin
 |Infections that lead to reported hospitalizations (&theta;)|Fitted|
 
 
+# Step 1 - Data 
+The data needed to run the model can be found in the Data folder. The model has been fit using RSV-coded hospitalizations collected through the ESSENCE system, but other data sets could also be used. Emergency Department visits could be used in place of inpatient hospitalizations. Example datasets from King County, Washington are provided.
 
 
-# Step 1 - Data Requirements 
-This model is intended to project the impact of new RSV interventions (vaccines for older adults and extended half-live monoclonals for infants) on RSV hospitalizations. The data needed to run the model can be found in the Data folder. The model has been fit using RSV-coded hospitalizations and emergency department (ED) visits collected through the ESSENCE system, but other data sets could also be used. Example datasets from King County, Washington are provided.
-### yinit
-This dataset is what you will use to initiate the burn-in for the model. The 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-64y, 65+y) are divided into the model compartments based on the age distribution and size of the population when you are starting your burn-in period. This assumes the age distribution in the population is relatively stable over time. You seed 1 infection in each age group >6 months. Note - some of the middle age groups are collapsed later in the code (becoming 1-4y and 5-64y). 
+## Subfolder -  Demographic data
+Within the Data folder there is an R script data_prep.R which will pull and format the demographic data you need for the model. 
+
+The yinit.rds is the dataset you will create first. This dataset is simply dividing the 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into the model compartments. Starting with the M and S0 compartments. One infection is seeded into each age group >6m in the I1 compartment.  The data_prep.r code will walk you through the steps. The model will initiate in January 1995 and "burn-in" until you have data for fitting. Alternatively you can complete the spreadsheet in the "Templates" folder. Not that there is also a yinit_interventions.rds dataset. This dataset includes the compartments for the interventions and will be used later in the code. 
+
+You will also need annual birth rates from 1995 - end of the burn in period, this is what will feed the M compartment of the model. Data has been pulled for all states and counties from CDC wonder. Follow the code in the data_prep.R script to format. 
+
+
 ### birth 
 This dataset is the birth rate per 1000 population for each week you will be running the model (from initiation of burn-in to projections). You can use the annual birth rate for each week or set the first week of the year to the annual birth rate and interpolate missing weeks between years. Later in the code this will be divided by 52.17 to convert from an annual to a weekly scale. Note, there is a column for each age group but only the first column (infants <2m) has data. The other columns are set to zero. 
 ### contact 
