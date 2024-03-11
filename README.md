@@ -11,7 +11,7 @@ As mentioned above. This model is an adaptation of earlier work. The model has b
 
 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="40%" align="left">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="45%" align="left">
 
 |Parameter|Fixed Value|
 |---|---|
