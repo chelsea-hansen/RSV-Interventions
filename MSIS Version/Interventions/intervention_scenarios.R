@@ -69,7 +69,7 @@ tmax=2387
 wa_times <- seq(1, tmax, by =1) 
 
 #upload parameters fit by MLE 
-fitLL = readRDS("parameters_21Sep2023.rds")
+fitLL = readRDS("Calibration/parameters_27Oct2023.rds")
 
 baseline.txn.rate=exp(fitLL$par[1])
 b1=exp(fitLL$par[2])
@@ -692,27 +692,27 @@ realistic_interventions = interventions(birth_dose= birth_dose.p,
 point_estimates = rbind(no_interventions %>% mutate(interventions = "None"),
                         realistic_interventions %>% mutate(interventions = "Realistic"),
                         optimistic_interventions %>% mutate(interventions = "Optimistic"))
- write.csv(point_estimates, "point_estimates.csv")
+ write.csv(point_estimates, "Visualizations/point_estimates.csv")
 
  
 point_estimates_totals = rbind(no_intervention_totals %>% mutate(interventions = "None"),
                           realistic_intervention_totals %>% mutate(interventions = "Realistic"),
                           optimistic_intervention_totals %>% mutate(interventions = "Optimistic"))
-  write.csv(point_estimates_totals, "point_estimates_totals.csv")
+  write.csv(point_estimates_totals, "Visualizations/point_estimates_totals.csv")
   
   projection_intervals = rbind(no_interventions_PI %>% mutate(interventions = "None"),
                           realistic_interventions_PI %>% mutate(interventions = "Realistic"),
                           optimistic_interventions_PI %>% mutate(interventions = "Optimistic"))
-  write.csv(projection_intervals, "projection_intervals.csv")
+  write.csv(projection_intervals, "Visualizations/projection_intervals.csv")
   
   projection_intervals_timeseries = rbind(no_interventions_timeseries %>% mutate(interventions = "None"),
                                realistic_interventions_timeseries %>% mutate(interventions = "Realistic"),
                                optimistic_interventions_timeseries %>% mutate(interventions = "Optimistic"))
   
-  write.csv(projection_intrevals_timeseries, "projection_intervals_timeseries.csv")
+  write.csv(projection_intrevals_timeseries, "Visualizations/projection_intervals_timeseries.csv")
   
   projection_intervals_sum = rbind(no_interventions_sum %>% mutate(interventions = "None"),
                                           realistic_interventions_sum %>% mutate(interventions = "Realistic"),
                                           optimistic_interventions_sum %>% mutate(interventions = "Optimistic"))
-  write.csv(projection_intrevals_sum, "projection_intervals_sum.csv")
+  write.csv(projection_intrevals_sum, "Visualizations/projection_intervals_sum.csv")
   

@@ -40,24 +40,28 @@ contact <- readRDS('Data/contact_POLYMOD.rds')
 #proportion of hospitalizations in each age group 
 #data not available to be shared - see "dummy" version for general structure 
 #wa_agedist = readRDS('Data/age_distribution_dummy.rds')
-wa_agedist <- readRDS('Data/age_distributions.rds') %>% arrange(age)
+#wa_agedist <- readRDS('Data/age_distributions.rds') %>% arrange(age)
+wa_agedist <- readRDS('update data/age_distributions.rds') %>% arrange(age)
 wa_agedist <- as.matrix(subset(wa_agedist, period=="pre-pandemic",select=c("prop_hosp")))
 
 
 #weekly time series of RSV hospitalizations (all ages) 
 #data not publicly available, see dummy version for structure 
 #values between 1 and 9 have been supressed and are interpolated 
+#rsv_pre = readRDS('Data/rsv_ts.rds') %>% 
+  #mutate(hrsv_smooth = round(rollmean(na_interpolation(hosp_rsv_adj), k=3, align="center",fill=NA)),
+         #ersv_smooth = round(rollmean(na_interpolation(ed_rsv_adj), k=3, align="center",fill=NA))) %>% 
+  #filter(!is.na(hrsv_smooth),date<='2020-03-28') %>% 
+  #select(date, rsvH=hrsv_smooth, rsvED=ersv_smooth)
 
-rsv_pre = readRDS('Data/rsv_ts.rds') %>% 
-  mutate(hrsv_smooth = round(rollmean(na_interpolation(hosp_rsv_adj), k=3, align="center",fill=NA)),
-         ersv_smooth = round(rollmean(na_interpolation(ed_rsv_adj), k=3, align="center",fill=NA))) %>% 
-  filter(!is.na(hrsv_smooth),date<='2020-03-28') %>% 
-  select(date, rsvH=hrsv_smooth, rsvED=ersv_smooth)
-
+rsv_pre = readRDS('update data/rsv_ts.rds') %>% 
+  select(date, rsvH=hrsv_smooth, rsvED=ersv_smooth) %>% 
+  filter(date<='2020-03-28') 
 
 #scale hosps to ED visits, pre-pandemic period 
 #data not publicly available, see dummy version for structure 
-scaling = readRDS("Data/scale_ed_to_hosp.rds") %>%
+#scaling = readRDS("Data/scale_ed_to_hosp.rds") %>%
+scaling = readRDS("update data/scale_ed_to_hosp.rds") %>%
   filter(period=="pre-pandemic") %>% 
   select(scale) 
 scaling = c(scaling$scale)
@@ -213,8 +217,8 @@ fitLL <- optim(par = c(1.1,-1.6,-.1,4,-5,-2,4, -1.6),#starting values
                control = list(fnscale=-1)) # the log likelihood is negative; here we maximize the log likelihood
 
 #save your parameters 
-saveRDS(fitLL, "parameters_21Sep2023.rds")
-
+saveRDS(fitLL, "parameters_27Oct2023.rds")
+fitLL = readRDS("Calibration/parameters_27Oct2023.rds")
 
 #list of fit parameters 
 baseline.txn.rate=exp(fitLL$par[1])
@@ -291,7 +295,6 @@ H$date <- dates$date[1933:2100]
 E = rowSums(ED)
 E <- data.frame(E)
 E$date <- dates$date[1933:2100]
-
 
 
 # Plot results  -----------------------------------------------------------
