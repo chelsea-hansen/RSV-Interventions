@@ -21,7 +21,7 @@ The model assumes that all infants are born into an "M" compartment (representin
 |*Relative risk of infection following third or later infection (1/&sigma;<sub>3</sub>)|0.4|
 |Relative risk of infection with maternal immunity (1/&sigma;<sub>3</sub>)|0.4|
 |Relative risk of hospitalization given infection for M compartment|0.7|
-|*Duration of maternal immunity (1/&omega;1)|112 days|
+|*Duration of maternal immunity (1/&omega;<sub>1</sub>)|112 days|
 |Duration of immunity following first and second infections (1/&omega;<sub>2</sub>)|182.625 days|
 |Duration of immunity following third or later infections (1/&omega;<sub>3</sub>)|365.25 days|
 |*Relative infectiousness - second infections (&rho;<sub>1</sub>)|0.75|
