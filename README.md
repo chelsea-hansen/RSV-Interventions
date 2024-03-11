@@ -18,14 +18,15 @@ As mentioned above. This model is an adaptation of earlier work. The model has b
 |Duration of infectiousness - third or later infection (&gamma;3)|5 days|
 |Relative risk of infection following first infection (&sigma;1)|0.76|
 |Relative risk of infection following second infection (&sigma;2)|0.6|
-|Relative risk of infection following third or later infection and with maternal immunity (1/&sigma;3)|0.4|
+|Relative risk of infection following third or later infection (1/&sigma;3)|0.4|
+|Relative risk of infection with maternal immunity (1/&sigma;3)|0.4|
 |Duration of maternal immunity (1/&omega;1)|112 days|
 |Duration of immunity following first and second infections (1/&omega;2)|182.625 days|
 |Duration of immunity following third or later infections (1/&omega;3)|365.25 days|
 |Relative infectiousness - second infections (not shown)|0.75|
 |Relative infectiousness - third or later infections (not shown)|0.51|
-|Baseline transmission rate (&Beta;)|Fitted|
-|Amplitude of seasonal forcing (&beta;1)|Fitted|
+|Baseline transmission rate (&beta;)|Fitted|
+|Amplitude of seasonal forcing (*b*1)|Fitted|
 |Phase of seasonal forcing (&phi;)|Fitted|
 |Infections that lead to reported hospitalizations (&theta;)|fitted|
 
