@@ -9,7 +9,7 @@ Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and exte
 # Model Structure 
 As mentioned above. This model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. Many of the model fixed model parameters have been taken from the earlier work by (Pitzer et al, 2015). 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="50%" height="50%" align="left">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="30%" height="30%" align="left">
 
 |Parameter|Fixed Value|
 |---|---|
@@ -23,8 +23,8 @@ As mentioned above. This model is an adaptation of earlier work. The model has b
 |Duration of maternal immunity (1/&omega;1)|112 days|
 |Duration of immunity following first and second infections (1/&omega;2)|182.625 days|
 |Duration of immunity following third or later infections (1/&omega;3)|365.25 days|
-|Relative infectiousness - second infections (not shown)|0.75|
-|Relative infectiousness - third or later infections (not shown)|0.51|
+|Relative infectiousness - second infections (&rho;1)|0.75|
+|Relative infectiousness - third or later infections (&rho;2)|0.51|
 |Baseline transmission rate (&beta;)|Fitted|
 |Amplitude of seasonal forcing (*b*1)|Fitted|
 |Phase of seasonal forcing (&phi;)|Fitted|
