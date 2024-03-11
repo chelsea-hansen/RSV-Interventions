@@ -15,7 +15,7 @@ The model assumes that all infants are born into an "M" compartment (representin
 |---|---|
 |*Duration of infectiousness - first infection (1/&gamma;1)|10 days|
 |*Duration of infectiousness - second infection (1/&gamma;2)|7 days|
-|*Duration of infectiousness - third or later infection (&gamma;3)|5 days|
+|*Duration of infectiousness - third or later infection (&gamma;<sub>3</sub>)|5 days|
 |*Relative risk of infection following first infection (&sigma;1)|0.76|
 |*Relative risk of infection following second infection (&sigma;2)|0.6|
 |*Relative risk of infection following third or later infection (1/&sigma;3)|0.4|
