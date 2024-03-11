@@ -3,10 +3,17 @@ This work was done in collaboration with Public Health Seattle & King County as 
 
 This model is an adaptation of earlier work, please see:
 Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotemporal Dynamics of Respiratory Syncytial Virus in the United States". PLOS Pathogens. 2015. https://doi.org/10.1371/journal.ppat.1004591
+
 Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
 
 # Model Structure 
-![RSV model diagram](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/0c3c3b70-e07e-403a-b2e8-8981ef48c1ad)
+![basic_structure_msirs](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c)
+
+As mentioned above. This model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. Many of the model fixed model parameters have been taken from the earlier work by (Pitzer et al, 2015). Model parameters are provided below: 
+
+|Parameter|Fixed Value|
+|---|---|
+|Duration of infectiousness - first infection (1/&gamma;1)|10 days|
 
 # Step 1 - Data Requirements 
 This model is intended to project the impact of new RSV interventions (vaccines for older adults and extended half-live monoclonals for infants) on RSV hospitalizations. The data needed to run the model can be found in the Data folder. The model has been fit using RSV-coded hospitalizations and emergency department (ED) visits collected through the ESSENCE system, but other data sets could also be used. Example datasets from King County, Washington are provided.
