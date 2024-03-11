@@ -7,30 +7,29 @@ Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotempo
 Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
 
 # Model Structure 
-As mentioned above. This model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. Many of the model fixed model parameters have been taken from the earlier work by (Pitzer et al, 2015). 
-
-
+The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections becomes less. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is proviced below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015). 
 
 <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="45%" align="left">
 
 |Parameter|Fixed Value|
 |---|---|
-|Duration of infectiousness - first infection (1/&gamma;1)|10 days|
-|Duration of infectiousness - second infection (1/&gamma;2)|7 days|
-|Duration of infectiousness - third or later infection (&gamma;3)|5 days|
-|Relative risk of infection following first infection (&sigma;1)|0.76|
-|Relative risk of infection following second infection (&sigma;2)|0.6|
-|Relative risk of infection following third or later infection (1/&sigma;3)|0.4|
+|*Duration of infectiousness - first infection (1/&gamma;1)|10 days|
+|*Duration of infectiousness - second infection (1/&gamma;2)|7 days|
+|*Duration of infectiousness - third or later infection (&gamma;3)|5 days|
+|*Relative risk of infection following first infection (&sigma;1)|0.76|
+|*Relative risk of infection following second infection (&sigma;2)|0.6|
+|*Relative risk of infection following third or later infection (1/&sigma;3)|0.4|
 |Relative risk of infection with maternal immunity (1/&sigma;3)|0.4|
-|Duration of maternal immunity (1/&omega;1)|112 days|
+|Relative risk of hospitalization given infection with maternal immunity|0.7|
+|*Duration of maternal immunity (1/&omega;1)|112 days|
 |Duration of immunity following first and second infections (1/&omega;2)|182.625 days|
 |Duration of immunity following third or later infections (1/&omega;3)|365.25 days|
-|Relative infectiousness - second infections (&rho;1)|0.75|
-|Relative infectiousness - third or later infections (&rho;2)|0.51|
+|*Relative infectiousness - second infections (&rho;1)|0.75|
+|*Relative infectiousness - third or later infections (&rho;2)|0.51|
 |Baseline transmission rate (&beta;)|Fitted|
 |Amplitude of seasonal forcing (*b*1)|Fitted|
 |Phase of seasonal forcing (&phi;)|Fitted|
-|Infections that lead to reported hospitalizations (&theta;)|fitted|
+|Infections that lead to reported hospitalizations (&theta;)|Fitted|
 
 
 
