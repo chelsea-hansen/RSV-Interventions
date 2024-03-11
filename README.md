@@ -13,19 +13,19 @@ The model assumes that all infants are born into an "M" compartment (representin
 
 |Parameter|Fixed Value|
 |---|---|
-|*Duration of infectiousness - first infection (1/&gamma;1)|10 days|
-|*Duration of infectiousness - second infection (1/&gamma;2)|7 days|
+|*Duration of infectiousness - first infection (1/&gamma;<sub>1</sub)|10 days|
+|*Duration of infectiousness - second infection (1/&gamma;<sub>2</sub)|7 days|
 |*Duration of infectiousness - third or later infection (&gamma;<sub>3</sub>)|5 days|
-|*Relative risk of infection following first infection (&sigma;1)|0.76|
-|*Relative risk of infection following second infection (&sigma;2)|0.6|
-|*Relative risk of infection following third or later infection (1/&sigma;3)|0.4|
-|Relative risk of infection with maternal immunity (1/&sigma;3)|0.4|
+|*Relative risk of infection following first infection (&sigma;<sub>1</sub)|0.76|
+|*Relative risk of infection following second infection (&sigma;<sub>2</sub)|0.6|
+|*Relative risk of infection following third or later infection (1/&sigma;<sub>3</sub)|0.4|
+|Relative risk of infection with maternal immunity (1/&sigma;<sub>3</sub)|0.4|
 |Relative risk of hospitalization given infection for M compartment|0.7|
 |*Duration of maternal immunity (1/&omega;1)|112 days|
-|Duration of immunity following first and second infections (1/&omega;2)|182.625 days|
-|Duration of immunity following third or later infections (1/&omega;3)|365.25 days|
-|*Relative infectiousness - second infections (&rho;1)|0.75|
-|*Relative infectiousness - third or later infections (&rho;2)|0.51|
+|Duration of immunity following first and second infections (1/&omega;<sub>2</sub)|182.625 days|
+|Duration of immunity following third or later infections (1/&omega;<sub>3</sub)|365.25 days|
+|*Relative infectiousness - second infections (&rho;<sub>1</sub)|0.75|
+|*Relative infectiousness - third or later infections (&rho;<sub>2</sub)|0.51|
 |Baseline transmission rate (&beta;)|Fitted|
 |Amplitude of seasonal forcing (*b*1)|Fitted|
 |Phase of seasonal forcing (&phi;)|Fitted|
