@@ -7,6 +7,7 @@ For more information about recommendations for these new immunizations please se
 This work was done in collaboration with Public Health Seattle & King County as part of a CSTE/CDC - supported initiative, "Development of forecast, analytic, and visualization tools to improve outbreak response and support public health decision making."
 
 This model is an adaptation of earlier work, please see:
+
 Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotemporal Dynamics of Respiratory Syncytial Virus in the United States". PLOS Pathogens. 2015. https://doi.org/10.1371/journal.ppat.1004591
 
 Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
@@ -52,7 +53,7 @@ The code will also require birth rates and the age-specific population distribut
 The first dataset you will create is ```yinit.rds```. This dataset divides the 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into the model compartments, starting with the M and S0 compartments. Each row represents an age group. Note: these age groups do not need to be the same as the age groups from the RSV age distributions. One 
 infection is seeded into each age group >6m in the I1 compartment. See below. The model will initiate in January 1995 and "burn-in" until your RSV time series begins (in the sample this is January 2017). 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/4f5419ff-a5d0-464b-b241-b7c7e32824e8" width="50%" height="50%" align="center">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/4f5419ff-a5d0-464b-b241-b7c7e32824e8" width="80%" height="80%" align="center">
 
 The code will also save another format of this dataset ```yinit.vector.rds``` and versions with the additional compartments for the immunizations (Mn,Mv,N,Si,Vs1,Vs2), ```yinit_interventions.rds``` and ```yinit.vector_interventions.rds```. These versions will be used during the Interventions step later. 
 
@@ -93,7 +94,7 @@ In addition to fitting the reductions in contacts, the model will fit a new repo
 
 After completing parts 1 and 2 of the calibration step, you will have a figure that looks like this: 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/08c3d85f-78ec-4203-a02a-68013e36ae75" width="50%" height="50%" align="center">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/08c3d85f-78ec-4203-a02a-68013e36ae75" width="80%" height="80%" align="center">
 
 The last part of the ```Calibration.R``` script uses Latin Hypercube Sampling to sample paramters from a plausible range around the fitted parameters (+/- 3%). It saves a versions with 100 and 1000 samples. 
 
@@ -113,7 +114,7 @@ Scenario Overview:
 ## Infant Immunizations
 The model now assumes that a proportion of infants are born to vaccinated mothers (Mv Compartment) and a proportion of infants receive monoclonal antibodies at or shortly after birth (Mn Compartment). These infants retain the same protection against infection as the M compartment, but have a higher protection against hospitalization given infection. Additionally, some infants receive a monoclonal antibody a few months after birth (N Compartment). These infants do not have any protection against infection, but they do have protection against hospitalization given infection. When the protection wanes from these compartments (Mv, Mn, N), infants move to the Si compartment. This compartment is functionally the same as the S0 compartment, but ensures that infants do not receive two interventions. 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/8c830c59-3d7d-4100-8a7d-f4f728656f62" width="50%" height="50%" align="center">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/8c830c59-3d7d-4100-8a7d-f4f728656f62" width="50%" height="50%" align="left">
 
 
 |Parameter|Optimistic Value|Pessimistic Value|
@@ -126,13 +127,15 @@ The model now assumes that a proportion of infants are born to vaccinated mother
 |cumulative coverage of maternal vaccination|user defined|user defined| 
 
 Clinical trials
+
 Monoclonal antibodies: (Hammitt et al, 2022) https://www.nejm.org/doi/full/10.1056/NEJMoa2110275
+
 Maternal Vaccination: (Kampmann et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2216480
 
 ## Senior Vaccination 
 The vaccination compartment (Vs1) draws seniors from the S3 and R4 compartments. Current data suggests that the vaccine is effective for at least 2 seasons. Seniors spend approximately 1 year in the Vs1 compartment before waning to the Vs2 compartment for another year and then returning to the S3 compartment. 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/a569dc65-8398-4059-8782-917b27c42041" width="50%" height="50%" align="center">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/a569dc65-8398-4059-8782-917b27c42041" width="50%" height="50%" align="left">
 
 
 |Parameter|Optimistic Value|Pessimistic Value|
@@ -142,7 +145,9 @@ The vaccination compartment (Vs1) draws seniors from the S3 and R4 compartments.
 |Cumulative coverage of vaccine|user defined|user defined|
 
 Clinical trials
+
 (Walsh et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2213836
+
 (Papi et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2209604
 
 
