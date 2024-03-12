@@ -10,7 +10,7 @@ Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotempo
 Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
 
 # Model Structure 
- <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="50%" height="35%" align="left">
+ <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="35%" align="left">
  
 The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections becomes less. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is provided below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015).
 
@@ -41,11 +41,14 @@ The data needed to run the model can be found in the ```1. Data``` folder. Examp
 ## RSV Data
 To run the model you will need to have a weekly time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations/ED visits. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. An example is provided below. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson regression and you will get an error if the RSV time series has not been rounded to whole numbers. 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/bcc3afa8-10d3-4a9b-a5c0-c6b0d42dbee0" width="50%" height="50%" align="left">
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/b20d3393-895a-4dfe-a522-c5dc970cf1c5" width="50%" height="50%" align="right">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/bcc3afa8-10d3-4a9b-a5c0-c6b0d42dbee0" width="45%" height="45%" align="left">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/b20d3393-895a-4dfe-a522-c5dc970cf1c5" width="45%" height="45%" align="right">
+
 
 <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/db797f05-3d3c-46bc-83ba-37fe5db51bfd" width="35%" height="35%" align="left">
+
 The age distribution is divided into 2 time periods: pre-pandemic (Janaury 2017 - March 2020) and post-pandemic (April 2020 - November 2023). The example uses 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). See below. The code could be modified to use different age groups. The code can also be run without the age distribution, however if this is done the projections based on the intervention scenarios will only be for all ages, not age-specific estimates. 
+
 
 
 ## Demographic data
