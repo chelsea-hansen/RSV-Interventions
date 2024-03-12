@@ -1,5 +1,5 @@
 # Acknowledgements
-This work was done in collaboration with Public Health Seattle & King County as part of a CSTE/CDC - supported initiative, "Development of forecast, analytic, and visualization tools to improve outbreak response and 
+This work was done in collaboration with Public Health Seattle & King County as part of a CSTE/CDC - supported initiative, "Development of forecast, analytic, and visualization tools to improve outbreak response and support public health decision making."
 
 This model is an adaptation of earlier work, please see:
 Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotemporal Dynamics of Respiratory Syncytial Virus in the United States". PLOS Pathogens. 2015. https://doi.org/10.1371/journal.ppat.1004591
@@ -8,7 +8,7 @@ Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and exte
 
 # Model Structure 
  <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="40%" align="left">
-The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections becomes less. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is proviced below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015).
+The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections becomes less. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is provided below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015).
 
 |Parameter|Fixed Value|
 |---|---|
@@ -32,7 +32,7 @@ The model assumes that all infants are born into an "M" compartment (representin
 
 
 # Step 1 - Data 
-The data needed to run the model can be found in the Data folder. The model has been fit using RSV-coded hospitalizations collected through the ESSENCE system, but other data sets could also be used. Emergency Department visits could be used in place of inpatient hospitalizations. Example datasets from King County, Washington are provided.
+The data needed to run the model can be found in the Data folder. Example datasets from King County, Washington are provided. Please note, to protect privacy in the sample datasets values between 1-9 have been supressed and reinterpolated. The data folder is further divided into 2 subfolders: ```RSV Data``` and Demographic Data. 
 
 
 ## Subfolder -  Demographic data
