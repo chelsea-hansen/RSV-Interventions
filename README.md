@@ -1,4 +1,4 @@
-In 2023 several new immunizations for RSV were approved. These include 2 vaccines for adults >60 years, a vaccination for pregnant women (to protect newborns), and an extended half-life monoclonal antibody for infants <8 months. The R scripts and datasets provided here fit a deterministic MSIRS model to RSV hospitalizations and project the impact of these new interventions under optimistic and pessimistic scenarios for coverage and effectiveness. 
+In 2023 several new immunizations for RSV were approved. These include 2 vaccines for adults >=60 years, a vaccination for pregnant women (to protect newborns), and an extended half-life monoclonal antibody for infants <8 months. The R scripts and datasets provided here fit a deterministic MSIRS model to RSV hospitalizations and provide projections for the impact of these new interventions under optimistic and pessimistic scenarios for coverage and effectiveness. 
 
 For more information about recommendations for these new immunizations please see: https://www.cdc.gov/vaccines/vpd/rsv/index.html
 
@@ -39,18 +39,18 @@ The model assumes that all infants are born into an "M" compartment (representin
 
 
 # Step 1 - Data 
-The data needed to run the model can be found in the ```1. Data``` folder. Example datasets from King County, Washington are provided. Please note, in the sample datasets values between 1-9 have been supressed and reinterpolated. The data folder is further divided into 2 subfolders: ```RSV Data``` and ```Demographic Data```. Details for each subfolder are provided below
+The data needed to run the model can be found in the ```1. Data``` folder. The data folder is further divided into 2 subfolders: ```RSV Data``` and ```Demographic Data```. Details for each subfolder are provided below
 
 ## RSV Data
-To run the model you will need to have a weekly time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations/ED visits. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson regression and you will get an error if the RSV time series has not been rounded to whole numbers. 
+To run the model you will need to have a weekly time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations/ED visits. Example datasets from King County, Washington are provided. Please note, in the sample datasets values between 1-9 have been supressed and reinterpolated. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson distribution and you will get an error if the RSV time series has not been rounded to whole numbers. 
 
 The age distribution is divided into 2 time periods: pre-pandemic (Janaury 2017 - March 2020) and post-pandemic (April 2020 - November 2023). The example uses 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). The code could be modified to use different age groups. The code can also be run without the age distribution, however if this is done the projections based on the intervention scenarios will only be for all ages, not age-specific estimates. 
 
 
 ## Demographic data
-The code will also require birth rates and the age-specific population distribution. The ```data_prep.R``` R script will pull and format all of the necessary data. 
+The code will also require birth rates and the age-specific population distribution. The ```data_prep.R``` R script will pull and format all of the necessary data using the ```tidycensus``` R package. 
 
-The first dataset you will create is ```yinit.rds```. This dataset divides the 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into the model compartments, starting with the M and S0 compartments. Each row represents an age group. Note: these age groups do not need to be the same as the age groups from the RSV age distributions. One 
+The first dataset you will create is ```yinit.rds```. This dataset divides the population from 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into the model compartments, starting with the M and S0 compartments. Note: these age groups do not need to be the same as the age groups from the RSV age distributions. One 
 infection is seeded into each age group >6m in the I1 compartment. See below. The model will initiate in January 1995 and "burn-in" until your RSV time series begins (in the sample this is January 2017). 
 
 <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/4f5419ff-a5d0-464b-b241-b7c7e32824e8" width="80%" height="80%" align="center">
@@ -61,7 +61,7 @@ Birth rate data has already been pulled from CDC Wonder and saved as ```birth_ra
 
 The ```data_prep.R``` script will also save a few additional parameters as ```other_parms.rds```.
 
-To run the next step (calibration) you will need 7 datasets. 
+To run the next step (Calibration) you will need 7 datasets. 
 1. The RSV time series (example saved as ```rsv_ts.rds```)
 2. The RSV age distribution (example saved as ```age_distribution.rds```)
 3. ```yinit.rds``` - created with the ```data_prep.R``` R script 
@@ -74,7 +74,7 @@ Please make sure you have prepared all of these datasets before moving to the ne
 # Step 2 - Calibration
 This step is the trickiest step in the process and likely where you will have the most difficulty. But the good news is you only need to run this once and then you can update and change your immunization scenarios as much as you like! 
 
-This step uses the R scripts in the ```2. Calibration``` folder. ```model_dynamics.R``` is the function which runs the model equations. ```model_calibration.R``` is the script which uploads the data, calls the rsv_dynamics function, and uses maximum likelihood estimation to estimate the model parameters. You will use the ```model_calibration.R``` script. As shown in the table at the top of the page, many of the parameters are fixed based on earlier papers. 
+This step uses the R scripts in the ```2. Calibration``` folder. ```model_dynamics.R``` is the function which runs the model equations. ```model_calibration.R``` is the script which uploads the data, calls the model_dynamics function, and uses Maximum Likelihood Estimation to estimate the model parameters. You will use the ```model_calibration.R``` script. You do not need to open the ```model_dynamics.R``` script to run the code. As shown in the table at the top of the page, many of the parameters are fixed based on earlier papers. 
 
 The initial step uses Maximum Likelihood Estimation to fit 4 parameters. The initial step is fitting only to the pre-pandemic time period (before March 2020). 
  1.  The baseline transmission rate (&beta;), bounded between 6 and 9.
@@ -82,9 +82,10 @@ The initial step uses Maximum Likelihood Estimation to fit 4 parameters. The ini
  3.  The timing/phase of seasonal forcing (&phi;), bounded between 0 and 2&pi;.
  4.  The proportion of infections leading to reported hospitalizations - reporting rate (&theta;), bounded to be between 0 and 1. 
 
-The second step uses these fitted parameters to fit the pandemic through the 2022-23 rebound season. To fit this time period the code will reduce the number of contacts by different amounts at different points. In addition to reducing the number of contacts, external seeing of infections is reduced to zero from April 2020 - February 2021, and then gradually returns to normal by May 2021. 
-Fitting contact reductions: 
- 1. It is assumed that there is a reduction in contacts from April - June 2020, corresponding with stay-at-home-order. Model will fit the amount of reduction (proportion between 0-1, with 1 representing pre-pandemic contact patterns)
+The second step uses these fitted parameters to fit data during the pandemic through the 2022-23 rebound season. To fit this time period the code will reduce the number of contacts by different amounts at different points. In addition to reducing the number of contacts, external seeing of infections is reduced to zero from April 2020 - February 2021, and then gradually returns to normal by May 2021. 
+
+Assumptions when fitting contact reductions: 
+ 1. It is assumed that there is a reduction in contacts from April - June 2020, corresponding with stay-at-home-orders. The model will fit the amount of reduction (proportion between 0-1, with 1 representing pre-pandemic contact patterns)
  2. It is assumed that following the end of stay-at-home orders, contacts remained lower into 2021. The model will fit the amount of reduction and the number of weeks contacts remained supressed.
  3. It is assumed that contacts began to return to normal in 2021. The model will estimate how long this ramp-up took and what level it reached by the end of 2021.
  4. It is assumed that there was another drop in contacts coinciding with the emergence of the Omicron variant in winter 2021-2022. The model will fit the amount and duration of this reduction.
@@ -96,10 +97,10 @@ After completing parts 1 and 2 of the calibration step, you will have a figure t
 
 <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/08c3d85f-78ec-4203-a02a-68013e36ae75" width="80%" height="80%" align="center">
 
-The last part of the ```Calibration.R``` script uses Latin Hypercube Sampling to sample paramters from a plausible range around the fitted parameters (+/- 3%). It saves a versions with 100 and 1000 samples. 
+The last part of the ```Calibration.R``` script uses Latin Hypercube Sampling to sample paramters from a plausible range around the fitted parameters (+/- 3%). It saves two versions one with 100 and one with 1000 samples. 
 
 # Step 3 - Interventions 
-This step uses the R scripts in the ```3. Interventions``` folder. ```MSIRS_scenarios.R``` is the script that runs the scenarios, ```MSIRS_intervention_models.R``` is the script which runs the model equations and ```MSIRS_scenario_functions.R``` is an R script that interfaces between the other 2 scripts. You will open and run the ```MSIRS_scenarios.R``` script. The script is designed to run 9 scenarios: 1 counterfactual (no interventions) plus 8 combinatios of optimistic and pessimistic coverage and effectiveness for the three interventions (RSV vaccination for adults >60 years, RSV vaccination for pregnant women, RSV monoclonal antibodies for infants <8 months). See details in the table below. Many of the parameters for the immunizations have been fixed based on clinical trials (see tables). This folder also includes a file ```coverage_curves_2023_24.rds``` which includes coverage curves scaled between 0 and 1. In the script the user is able to easily set an optimistic and pessimistic scenario for cumulative coverage of the intervention using these curves. 
+This step uses the R scripts in the ```3. Interventions``` folder. ```MSIRS_scenarios.R``` is the script that runs the scenarios, ```MSIRS_intervention_models.R``` is the script which runs the model equations and ```MSIRS_scenario_functions.R``` is an R script that interfaces between the other 2 scripts. You will open and run the ```MSIRS_scenarios.R``` script. The script is designed to run 9 scenarios: 1 counterfactual (no interventions) plus 8 combinations of optimistic and pessimistic coverage and effectiveness for the three interventions (RSV vaccination for adults >60 years, RSV vaccination for pregnant women, RSV monoclonal antibodies for infants <8 months). See details in the table below. Many of the parameters for the immunizations have been fixed based on clinical trials (see tables). This folder also includes a file ```coverage_curves_2023_24.rds``` which includes coverage curves scaled between 0 and 1. In the script the user is able to easily set an optimistic and pessimistic scenario for cumulative coverage of the intervention using these curves. 
 
 For each scenario, the counterfactual and A-G, there is an option to run just the point estimates (very fast) and an option to run the confidence intervals using the parameters sampled with Latin Hypercube Sampling. Running the confidence intervals with 1000 replicates is recommended, but will take around 2 hours for each scenario. Running the confidence intervals with 100 replicates will take 15-30 minutes per scenario. 
 
@@ -124,7 +125,7 @@ The model now assumes that a proportion of infants are born to vaccinated mother
 |Cumulative coverage of monoclonal antibodies|user defined|user defined|
 |Duration or protection from maternal vaccination (days)|180|180|
 |Effectiveness of maternal vaccination against hospitalization|70%|50%|
-|cumulative coverage of maternal vaccination|user defined|user defined| 
+|Cumulative coverage of maternal vaccination|user defined|user defined| 
 
 Clinical trials
 
@@ -151,7 +152,7 @@ Clinical trials
 (Papi et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2209604
 
 
-### Notes on interventions 
+### Notes about interventions
 The model assumes that interventions are providing protection against severe disease (hospitalization) but not against infection. The model also assumes that the interventions do not impact an individual's infectiousness if they become infected. 
 
 
@@ -159,5 +160,7 @@ The model assumes that interventions are providing protection against severe dis
 COMING SOON! 
 Shiny App for visualizing results 
 
-# Contact
+# Notes 
+A previous version of the model is provided in the ```MSIS Version``` folder. The workflow for this version is essentially the same, but the model structure is different. This version of the model does not include "R" compartments following infections. 
+
 For questions or assistance, please contact chelsea.hansen@nih.gov
