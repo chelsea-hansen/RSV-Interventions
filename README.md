@@ -88,7 +88,7 @@ After completing parts 1 and 2 of the calibration step, you will have a figure t
 
 
 # Step 3 - Interventions 
-This step uses the R scripts in the ```3. Interventions``` folder. ```MSIRS_scenarios.R``` is the script that runs the scenarios, ```MSIRS_intervention_models.R``` is teh script which runs the model equations and ```MSIRS_scenario_functions.R``` is an R script that interfaces between the other 2 scripts. You will open and run the ```MSIRS_scenarios.R``` script. The script is designed to run 8 scenarios with a combination of optimistic and pessimistic coverage and effectiveness for the three interventions (RSV vaccination for adults >60 years, RSV vaccination for pregnant women, RSV monoclonal antibodies for infants <8 months). See details in the table below. Many of the parameters for the vaccinations have been fixed based on clinical trials (see tables). In the script the user is able to easily set an optimistic and pessimistic scenario for cumulative coverage of the intervention. 
+This step uses the R scripts in the ```3. Interventions``` folder. ```MSIRS_scenarios.R``` is the script that runs the scenarios, ```MSIRS_intervention_models.R``` is teh script which runs the model equations and ```MSIRS_scenario_functions.R``` is an R script that interfaces between the other 2 scripts. You will open and run the ```MSIRS_scenarios.R``` script. The script is designed to run 8 scenarios with a combination of optimistic and pessimistic coverage and effectiveness for the three interventions (RSV vaccination for adults >60 years, RSV vaccination for pregnant women, RSV monoclonal antibodies for infants <8 months). See details in the table below. Many of the parameters for the vaccinations have been fixed based on clinical trials (see tables). This folder also includes a file ```coverage_curves_2023_24.rds``` which includes coverage curves for influenza, scaled between 0 and 1. In the script the user is able to easily set an optimistic and pessimistic scenario for cumulative coverage of the intervention. 
 
 Scenario Overview: 
 |Senior Immunization|Infant Immunization||||
@@ -98,18 +98,41 @@ Scenario Overview:
 |Senior Vaccination - Optimistic|A|B|C|D|
 |Senior Vaccination - Pessimistic|E|F|G|H|
 
+## Infant Immunizations
+The model now assumes that a proportion of infants are born to vaccinated mothers (Mv Compartment) and a proportion of infants receive monoclonal antibodies at or shortly after birth (Mn Compartment). These infants retain the same protection against infection as the M compartment, but have a higher protection against hospitalization given infection. Additionally, some infants receive a monoclonal antibody a few months after birth (N Compartment). These infants do not have any protection against infection, but they do have protection against hospitalization given infection. When the protection wanes from these compartments (Mv, Mn, N), infants move to the Si compartment. This compartment is functionally the same as the S0 compartment, but ensures that infants do not receive two interventions. 
 
 
+|Parameter|Optimistic Value|Pessimistic Value|
+|---------|----------------|-----------------|
+|Duration of protection from monoclonal antibodies (days)|180|180|
+|Effectiveness of monoclonal antibodies against hospitalization|80%|60%|
+|Cumulative coverage of monoclonal antibodies|user defined|user defined|
+|Duration or protection from maternal vaccination (days)|180|180|
+|Effectiveness of maternal vaccination against hospitalization|70%|50%|
+|cumulative coverage of maternal vaccination|user defined|user defined| 
 
+Clinical trials
+Monoclonal antibodies: (Hammitt et al, 2022) https://www.nejm.org/doi/full/10.1056/NEJMoa2110275
+Maternal Vaccination: (Kampmann et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2216480
 
+## Senior Vaccination 
+The vaccination compartment (Vs1) draws seniors from the S3 and R4 compartments. Current data suggests that the vaccine is effective for at least 2 seasons. Seniors spend approximately 1 year in the Vs1 compartment before waning to the Vs2 compartment for another year and then returning to the S3 compartment. 
 
-This folder also includes a file ```coverage_curves_2023_24.rds``` which includes coverage curves for influenza, scaled between 0 and 1. 
+|Parameter|Optimistic Value|Pessimistic Value|
+|---------|----------------|-----------------|
+|Duration of protection from vaccination (days)|730.5|730.5|
+|Effectiveness of vaccine against hospitalization|90%|70%|
+|Cumulative coverage of vaccine|user defined|user defined|
 
+Clinical trials
+(Walsh et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2213836
+(Papi et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2209604
 
-function that runs the model equations (with compartments for vaccination in seniors and monoclonal antibodies in infants). intervention_scenarios.R uses the parameters from Step 2 and estimates the impact of interventions under different scenarios for intervention coverage, effectiveness, and timing. Sample scenarios are provided, but these can be modified to answer your research questions. 
 
 ### Notes on interventions 
 The model assumes that interventions are providing protection against severe disease (hospitalization) but not against infection. The model also assumes that the interventions do not impact an individual's infectiousness if they become infected. 
 
-### Notes on fitting to the pandemic period 
-The interventions model uses the model parameters fit during the pre-pandemic period and then projects forward. To account for distruptions during the COVID-19 pandemic we reduced the baseline transmission rate (beta) by 25% from April - June 2020 (representing the stay-at-home order) and then allowed beta to increase linearly to pre-pandemic levels between July 2020 and March 2021. We included an additional 25% beta reduction from mid-December 2021 through February 2022 to account for the emergence of the Omicron BA.1 variant. We did this because it is likely that people adopted protective measures during this time, reducing RSV transmission. Furthermore, it is also possible that viral interactions may have resulted in a decline in RSV transmission during this period. Together with these reductions in beta, we reduced imported infections (seeding) to zero from April 2020 - January 2021 and allowed for a linear increase to normal levels between February 2021 - May 2021. This approach is based on the paper by Zheng et al. "Estimation of the Timing and Intensity of Reemergence of Respiratory Syncytial Virus Following the COVID-19 Pandemic in the US." JAMA Netw Open. 2021. 
+
+# Step 4 - Visualization 
+COMING SOON! 
+Shiny App for visualizing results 
