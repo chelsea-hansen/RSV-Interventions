@@ -91,8 +91,8 @@ After completing parts 1 and 2 of the calibration step, you will have a figure t
 This step uses the R scripts in the ```3. Interventions``` folder. ```MSIRS_scenarios.R``` is the script that runs the scenarios, ```MSIRS_intervention_models.R``` is teh script which runs the model equations and ```MSIRS_scenario_functions.R``` is an R script that interfaces between the other 2 scripts. You will open and run the ```MSIRS_scenarios.R``` script. The script is designed to run 8 scenarios with a combination of optimistic and pessimistic coverage and effectiveness for the three interventions (RSV vaccination for adults >60 years, RSV vaccination for pregnant women, RSV monoclonal antibodies for infants <8 months). See details in the table below. Many of the parameters for the vaccinations have been fixed based on clinical trials (see tables). In the script the user is able to easily set an optimistic and pessimistic scenario for cumulative coverage of the intervention. 
 
 Scenario Overview: 
-|Senior Immunization|Infant Immunization||||
-|-|-|-|-|-|
+|Infant Immunization|
+|:-:|
 ||Monoclonal Antibodies - Optimistic|Monoclonal Antibodies - Optimistic|Monoclonal Antibodies - Pessimistic|Monoclonal Antibodies - Pessimistic|
 ||Maternal Vaccination - Optimistic|Maternal Vaccination - Pessimistic|Maternal Vaccination - Optimistic|Maternal Vaccination - Pessimistic|
 |Senior Vaccination - Optimistic|A|B|C|D|
