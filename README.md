@@ -42,7 +42,7 @@ The data needed to run the model can be found in the ```1. Data``` folder. Examp
 To run the model you will need to have a weekly time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations/ED visits. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. An example is provided below. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson regression and you will get an error if the RSV time series has not been rounded to whole numbers. 
 
 <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/bcc3afa8-10d3-4a9b-a5c0-c6b0d42dbee0" width="45%" height="45%" align="left">
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/b20d3393-895a-4dfe-a522-c5dc970cf1c5" width="45%" height="45%" align="right">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/b20d3393-895a-4dfe-a522-c5dc970cf1c5" width="50%" height="45%" align="right">
 
 
 <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/db797f05-3d3c-46bc-83ba-37fe5db51bfd" width="35%" height="35%" align="left">
@@ -99,7 +99,7 @@ In addition to fitting the reductions in contacts, the model will fit a new repo
 
 After completing parts 1 and 2 of the calibration step, you will have a figure that looks like this: 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/08c3d85f-78ec-4203-a02a-68013e36ae75" align="center">
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/08c3d85f-78ec-4203-a02a-68013e36ae75" width="50%" height="50%" align="center">
 
 The last part of the ```Calibration.R``` script uses Latin Hypercube Sampling to sample paramters from a plausible range around the fitted parameters (+/- 3%). It saves a versions with 100 and 1000 samples. 
 
