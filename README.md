@@ -53,19 +53,7 @@ Birth rate data has already been pulled from CDC Wonder and saved as ```birth_ra
 
 The ```data_prep.R``` script will also save a few additional parameters as ```other_parms.rds```.
 
-
-### birth 
-This dataset is the birth rate per 1000 population for each week you will be running the model (from initiation of burn-in to projections). You can use the annual birth rate for each week or set the first week of the year to the annual birth rate and interpolate missing weeks between years. Later in the code this will be divided by 52.17 to convert from an annual to a weekly scale. Note, there is a column for each age group but only the first column (infants <2m) has data. The other columns are set to zero. 
-### contact 
-This model uses the contact martix from the POLYMOD study (Mossong et al. 2008. "Social Contacts and Mixing Patterns Relevant to the Spread of Infectious Diseases." PLOS Medicine. https://doi.org/10.1371/journal.pmed.0050074.) The contact matrix has been aggregated to match the age groups used in this model. 
-### rsv_ts
-This is a weekly count of RSV-coded hospitalizations (and optionally, ED visits) for all age groups combined. Values from 1-9 in the sample dataset have been suppressed and are interpolated. It is recommended to have at least 3 years of data prior to the COVID-19 pandemic, but more years of data is better. 
-### age_distribution
-This is the proporiton of RSV-coded hospitalizations (and optionally, ED visits) in each age group (with middle age groups collapsed in to 1-4yrs and 5-64yrs). The proportions are separated into the pre-pandemic time period (pre-March 2020) and the post-pandemic (post-March 2020) time period. 
-### scale_ed_to_hosp (optional)
-The model is calibrated to RSV-coded hospitalizations. This dataset is used to scale hospitalizations to ED visits using the ratio of hospitalizations to ED visits in each age group during the pre- and post- pandemic time periods. This dataset is only necessary if you would like to produce estimates for ED visits in addition to hospitalizations. 
-
-# Step 2 - Parameter Estimation 
+# Step 2 - Calibration
 This step uses the R scripts in the "Calibration" folder. rsv_dynamics.R is the function which runs the model equations. model_calibration.R is the script which uploads the data, calls the rsv_dynamics function, and uses maximum likelihood estimation to estimate the model parameters. You will use the model_calibration.R script. Many parameters are set based on the literature. 
 The model fits 8 parameters: 
  - The baseline transmission rate (beta)
