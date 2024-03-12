@@ -8,6 +8,7 @@ Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and exte
 
 # Model Structure 
  <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="40%" align="left">
+ 
 The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections becomes less. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is provided below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015).
 
 |Parameter|Fixed Value|
@@ -32,15 +33,25 @@ The model assumes that all infants are born into an "M" compartment (representin
 
 
 # Step 1 - Data 
-The data needed to run the model can be found in the Data folder. Example datasets from King County, Washington are provided. Please note, to protect privacy in the sample datasets values between 1-9 have been supressed and reinterpolated. The data folder is further divided into 2 subfolders: ```RSV Data``` and Demographic Data. 
+The data needed to run the model can be found in the ```1. Data``` folder. Example datasets from King County, Washington are provided. Please note, in the sample datasets values between 1-9 have been supressed and reinterpolated. The data folder is further divided into 2 subfolders: ```RSV Data``` and ```Demographic Data```. Details for each subfolder are provided below
 
+## RSV Data
+The run the model you will need to have a weekly time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations/ED visits. For the weekly time series it is best if you can have at least 3 years prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. An example is provided below. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson regression and the values for the RSV time series must be whole numbers. 
 
-## Subfolder -  Demographic data
-Within the Data folder there is an R script data_prep.R which will pull and format the demographic data you need for the model. 
+The age distribution is divided into 2 time periods: pre-pandemic (Janaury 2017 - March 2020) and post-pandemic (April 2020 - November 2023). The example uses 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). See below. The code could be modified to use different age groups. The code can also be run without the age distribution, however if this is done the projections based on the intervention scenarios will only be for all ages, not age-specific estimates. 
 
-The yinit.rds is the dataset you will create first. This dataset is simply dividing the 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into the model compartments. Starting with the M and S0 compartments. One infection is seeded into each age group >6m in the I1 compartment.  The data_prep.r code will walk you through the steps. The model will initiate in January 1995 and "burn-in" until you have data for fitting. Alternatively you can complete the spreadsheet in the "Templates" folder. Not that there is also a yinit_interventions.rds dataset. This dataset includes the compartments for the interventions and will be used later in the code. 
+## Demographic data
+The code will also require birth rates and the age-specific population distribution. The ```data_prep.R``` R script will pull and format all of the necessary data. 
 
-You will also need annual birth rates from 1995 - end of the burn in period, this is what will feed the M compartment of the model. Data has been pulled for all states and counties from CDC wonder. Follow the code in the data_prep.R script to format. 
+The first dataset you will create is ```yinit.rds```. This dataset divides the 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into the model compartments, starting with the M and S0 compartments. Note: these age groups do not need to be the same as the age groups from the RSV age distributions. One infection is seeded into each age group >6m in the I1 compartment. See below. 
+
+The model will initiate in January 1995 and "burn-in" until your RSV time series begins (in the sample this is January 2017). 
+
+The code will also save another format of this dataset ```yinit.vector.rds``` and versions with the additional compartments for the immunizations (Mn,Mv,N,Si,Vs1,Vs2), ```yinit_interventions.rds``` and ```yinit.vector_interventions.rds```. These versions will be used during the Interventions step later. 
+
+Birth rate data has already been pulled from CDC Wonder and saved as ```birth_rates_by_state.rds``` and ```birth_rates_by_county.rds```. Use the provided code to format correctly for the model. 
+
+The ```data_prep.R``` script will also save a few additional parameters as ```other_parms.rds```.
 
 
 ### birth 
