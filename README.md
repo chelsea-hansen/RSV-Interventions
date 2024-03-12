@@ -1,4 +1,6 @@
-In 2023 several new immunizations for RSV were approved. These include 2 vaccines for adults >60 years, a vaccination for pregnant women (to protect newborns), and an extended half-life monoclonal antibody for infants <8 months. The R scripts and datasets provided here fit a deterministic MSIRS model to RSV hospitalizations and project the impact of these new interventions under optimistic and pessimistic scenarios for coverage and effectiveness. For more information about recommendations for these new immunizations please see: https://www.cdc.gov/vaccines/vpd/rsv/index.html
+In 2023 several new immunizations for RSV were approved. These include 2 vaccines for adults >60 years, a vaccination for pregnant women (to protect newborns), and an extended half-life monoclonal antibody for infants <8 months. The R scripts and datasets provided here fit a deterministic MSIRS model to RSV hospitalizations and project the impact of these new interventions under optimistic and pessimistic scenarios for coverage and effectiveness. 
+
+For more information about recommendations for these new immunizations please see: https://www.cdc.gov/vaccines/vpd/rsv/index.html
 
 
 # Acknowledgements
@@ -39,16 +41,9 @@ The model assumes that all infants are born into an "M" compartment (representin
 The data needed to run the model can be found in the ```1. Data``` folder. Example datasets from King County, Washington are provided. Please note, in the sample datasets values between 1-9 have been supressed and reinterpolated. The data folder is further divided into 2 subfolders: ```RSV Data``` and ```Demographic Data```. Details for each subfolder are provided below
 
 ## RSV Data
-To run the model you will need to have a weekly time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations/ED visits. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. An example is provided below. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson regression and you will get an error if the RSV time series has not been rounded to whole numbers. 
+To run the model you will need to have a weekly time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations/ED visits. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson regression and you will get an error if the RSV time series has not been rounded to whole numbers. 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/bcc3afa8-10d3-4a9b-a5c0-c6b0d42dbee0" width="45%" height="45%" align="left">
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/b20d3393-895a-4dfe-a522-c5dc970cf1c5" width="50%" height="45%" align="right">
-
-
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/db797f05-3d3c-46bc-83ba-37fe5db51bfd" width="35%" height="35%" align="left">
-
-The age distribution is divided into 2 time periods: pre-pandemic (Janaury 2017 - March 2020) and post-pandemic (April 2020 - November 2023). The example uses 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). See below. The code could be modified to use different age groups. The code can also be run without the age distribution, however if this is done the projections based on the intervention scenarios will only be for all ages, not age-specific estimates. 
-
+The age distribution is divided into 2 time periods: pre-pandemic (Janaury 2017 - March 2020) and post-pandemic (April 2020 - November 2023). The example uses 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). The code could be modified to use different age groups. The code can also be run without the age distribution, however if this is done the projections based on the intervention scenarios will only be for all ages, not age-specific estimates. 
 
 
 ## Demographic data
@@ -57,8 +52,7 @@ The code will also require birth rates and the age-specific population distribut
 The first dataset you will create is ```yinit.rds```. This dataset divides the 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into the model compartments, starting with the M and S0 compartments. Each row represents an age group. Note: these age groups do not need to be the same as the age groups from the RSV age distributions. One 
 infection is seeded into each age group >6m in the I1 compartment. See below. The model will initiate in January 1995 and "burn-in" until your RSV time series begins (in the sample this is January 2017). 
 
-<img src="(https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/4a9a293a-1279-4919-b1a9-b384b05d2ec3" align="center">
-
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/4f5419ff-a5d0-464b-b241-b7c7e32824e8" width="50%" height="50%" align="center">
 
 The code will also save another format of this dataset ```yinit.vector.rds``` and versions with the additional compartments for the immunizations (Mn,Mv,N,Si,Vs1,Vs2), ```yinit_interventions.rds``` and ```yinit.vector_interventions.rds```. These versions will be used during the Interventions step later. 
 
@@ -119,6 +113,8 @@ Scenario Overview:
 ## Infant Immunizations
 The model now assumes that a proportion of infants are born to vaccinated mothers (Mv Compartment) and a proportion of infants receive monoclonal antibodies at or shortly after birth (Mn Compartment). These infants retain the same protection against infection as the M compartment, but have a higher protection against hospitalization given infection. Additionally, some infants receive a monoclonal antibody a few months after birth (N Compartment). These infants do not have any protection against infection, but they do have protection against hospitalization given infection. When the protection wanes from these compartments (Mv, Mn, N), infants move to the Si compartment. This compartment is functionally the same as the S0 compartment, but ensures that infants do not receive two interventions. 
 
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/8c830c59-3d7d-4100-8a7d-f4f728656f62" width="50%" height="50%" align="center">
+
 
 |Parameter|Optimistic Value|Pessimistic Value|
 |---------|----------------|-----------------|
@@ -135,6 +131,9 @@ Maternal Vaccination: (Kampmann et al, 2023) https://www.nejm.org/doi/full/10.10
 
 ## Senior Vaccination 
 The vaccination compartment (Vs1) draws seniors from the S3 and R4 compartments. Current data suggests that the vaccine is effective for at least 2 seasons. Seniors spend approximately 1 year in the Vs1 compartment before waning to the Vs2 compartment for another year and then returning to the S3 compartment. 
+
+<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/a569dc65-8398-4059-8782-917b27c42041" width="50%" height="50%" align="center">
+
 
 |Parameter|Optimistic Value|Pessimistic Value|
 |---------|----------------|-----------------|
