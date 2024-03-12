@@ -16,18 +16,17 @@ library(lhs)
 
 
 # Step 1 - upload necessary data ------------------------------------------
-setwd("C:/Users/hansencl/OneDrive - National Institutes of Health/Desktop/GitHub Updates")
 
 #starting with demographic data 
 #population is divided in to the M and S0 compartments 
 #seed 1 infection in each compartment >6m, burn-in from 1995 to present 
 #use the version you saved without the immunization compartments (Mn,Mv,N,Si,Vs1,Vs2)
-yinit = readRDS("Data/Demographic Data/yinit.rds") 
+yinit = readRDS("1. Data/Demographic Data/yinit.rds") 
 yinit=as.matrix(yinit)
-yinit.vector = readRDS("Data/Demographic Data/yinit.vector.rds")
+yinit.vector = readRDS("1. Data/Demographic Data/yinit.vector.rds")
 
 #birth rates 
-birth <-readRDS('Data/Demographic Data/births_kingcounty.rds') %>% select(-date)
+birth <-readRDS('1. Data/Demographic Data/births_kingcounty.rds') %>% select(-date)
 birth = as.matrix(birth)
 
 #vector of data from burn-in through projection period 
@@ -37,19 +36,19 @@ tmax2 = 1506 #end of rebound period (2023-11-11)
 tmax3 = 1535#projection for the 2023-2024 season (2024-06-01)
 
 #Upload the POLYMOD contact matrix, already aggregated to relevant age groups 
-contact <- readRDS('Data/Demographic Data/contact_POLYMOD.rds')
+contact <- readRDS('1. Data/Demographic Data/contact_POLYMOD.rds')
 
 
 #upload the other parameters - weekly seeding and death/migration rates 
-seed = readRDS("Data/Demographic Data/other_parms.rds")[1] #seeding 1 infection per 100,000 population each week
+seed = readRDS("1. Data/Demographic Data/other_parms.rds")[1] #seeding 1 infection per 100,000 population each week
 introductions=c(rep(seed,tmax)) #vector through burn-in period 
-um = readRDS("Data/Demographic Data/other_parms.rds")[2]*-1 #death death and migration rate 
+um = readRDS("1. Data/Demographic Data/other_parms.rds")[2]*-1 #death death and migration rate 
 npi = c(rep(1,tmax)) #vector through burn-in period - not NPIs during the -pre-pandemic period 
-pop_2022 = readRDS("Data/Demographic Data/other_parms.rds")[3] #2022 population size (most recent available data)
+pop_2022 = readRDS("1. Data/Demographic Data/other_parms.rds")[3] #2022 population size (most recent available data)
 
 
 #weekly time series of RSV hospitalizations (all ages)- before March 2020 
-rsv_pre = readRDS('Data/RSV Data/rsv_ts.rds') %>% 
+rsv_pre = readRDS('1. Data/RSV Data/rsv_ts.rds') %>% 
   select(date, rsvH=hrsv_smooth) %>% 
   filter(date<='2020-03-28') %>% 
   mutate(rsvH = round(rsvH))
