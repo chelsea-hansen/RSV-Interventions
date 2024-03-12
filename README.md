@@ -7,7 +7,7 @@ Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotempo
 Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
 
 # Model Structure 
- <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="40%" align="left">
+ <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="40%" height="40%" align="left">
  
 The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections becomes less. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is provided below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015).
 
@@ -53,22 +53,39 @@ Birth rate data has already been pulled from CDC Wonder and saved as ```birth_ra
 
 The ```data_prep.R``` script will also save a few additional parameters as ```other_parms.rds```.
 
+To run the next step (calibration you will need 7 datasets). 
+1. The RSV time series (example saved as ```rsv_ts.rds```)
+2. The RSV age distribution (example saved as ```age_distribution.rds```)
+3. ```yinit.rds``` - created with the ```data_prep.R``` R script 
+4. ```yinit.vector.rds``` - created with the ```data_prep.R``` R script
+5. ```other_parms.rds``` - created with the ```data_prep.R``` R script
+6. The birth rate dataset created with the ```data_prep.R``` R script (example provided as ```births_kingcounty.rds```
+7. ```contact_POLYMOD.rds``` - already provided in the correct format.
+Please make sure you have prepared all of these datasets before moving to the next step. 
+   
 # Step 2 - Calibration
-This step uses the R scripts in the "Calibration" folder. rsv_dynamics.R is the function which runs the model equations. model_calibration.R is the script which uploads the data, calls the rsv_dynamics function, and uses maximum likelihood estimation to estimate the model parameters. You will use the model_calibration.R script. Many parameters are set based on the literature. 
-The model fits 8 parameters: 
- - The baseline transmission rate (beta)
- - The amplitude of seasonal forcing
- - The timing/phase of seasonal forcing
- - The duration of transplacental immunity
- - The relative risk of hospitalization given infection among infants protected by transplacental immunity
- - The number of weekly external introductions of infection (seeding)
- - The proportion of infections leading to a reported RSV hospitalization in seniors
-   - The proportion of infections leading to hospitalizations in the 1-4yrs age group is set to the same value as the proportion in adults 65+ yrs (van Boven et al. "Estimating Transmission Parameters for Respiratory Syncytial Virus and Predicting the Impact of Maternal and Pediatric Vaccination." JID. 2020.)
-   - The proportion of infections leading to hospitalizations in the 5-64 yrs age group is .06 times the proportion in adults 65+ yrs, based on influenza (Biggerstaff et al. "Estimating the Potential Effects of a Vaccine Program Against an Emerging Influenza Pandemic—United States." CID. 2015.)
- - The proportion of infections leading to a reported RSV hospitalization in infants <2 months
-   - The proportion of infections in infants >2 months (in 2-month age bands) is set relative to those <2 months based on the paper by Zheng et al referenced at the top of this document.
-  
-Save the estimated parameters for use in modeling the impact of interventions
+This step is the trickiest step in the process and likely where you will have the most difficulty. But the good news is you only need to run this once and then you can update change your immunozation scenarios as you like! 
+
+This step uses the R scripts in the ```2. Calibration``` folder. ```rsv_dynamics.R``` is the function which runs the model equations. ```model_calibration.R``` is the script which uploads the data, calls the rsv_dynamics function, and uses maximum likelihood estimation to estimate the model parameters. You will use the ```model_calibration.R``` script. As shown in the table at the top of the page, many of the parameters are fixed based on earlier papers. 
+
+The initial step uses Maximil Likelihood Estimation to fit 4 parameters. The initial step is fitting only to the pre-pandemic time period (before March 2020). 
+ 1.  The baseline transmission rate (&beta;), bounded between 6 and 9.
+ 2.  The amplitude of seasonal forcing (*b*1).
+ 3.  The timing/phase of seasonal forcing (&phi;), bounded between 0 and 2&pi;.
+ 4.  The proportion of infections leading to reported hospitalizations - reporting rate (&theta;), bounded to be between 0 and 1. 
+
+The second step uses these fitted parameters to fit the pandemic through the 2022-23 rebound season. To fit this time period the code will reduce the number of contacts by different amoungs at different points. In addition to reducing the number of contacts, exteral seeing of infections is reduced to zero from April 2020 - February 2021, and then gradually returns to normal by May 2021. 
+Fitting contact reductions: 
+ 1. It is assumed that there is a reduction in contacts from April - June 2020, corresponding with stay-at-home-order. Model will fit the amount of reduction (proportion between 0-1, with 1 representing pre-pandemic contact patterns)
+ 2. It is assumed that following the end of stay-at-home orders, contacts remained lower into 2021. The model will fit the amount of reduction and the number of weeks contacts remained supressed.
+ 3. It is assumed that contacts began to return to normal in 2021. The model will estimate how long this ramp-up took and what level it reached by the end of 2021.
+ 4. It is assumed that there was another drop in contacts coinciding with the emergence of the Omicron variant in winter 2021-2022. The model will fit the amount and duration of this reduction.
+ 5. It is assumed that following the initial Omicron wave, contacts gradually increased through 2022, returning to pre-pandemic levels by the fall of 2022. The model will fit the number of weeks this return to normal took.
+
+In addition to fitting the reductions in contacts, the model will fit a new reporting rate to account for increases in testing and RSV case reporting. The new reporting rate is bounded between the pre-pandemic reporting rate, and a 100% increase. 
+
+After completing parts 1 and 2 of the calibration step, you will have a figure that looks like this: 
+
 
 # Step 3 - Model the Impact of Interventions 
 This step uses the R scripts in the "Interventions" folder. intervention_models.R is the function that runs the model equations (with compartments for vaccination in seniors and monoclonal antibodies in infants). intervention_scenarios.R uses the parameters from Step 2 and estimates the impact of interventions under different scenarios for intervention coverage, effectiveness, and timing. Sample scenarios are provided, but these can be modified to answer your research questions. 
