@@ -66,7 +66,7 @@ Please make sure you have prepared all of these datasets before moving to the ne
 # Step 2 - Calibration
 This step is the trickiest step in the process and likely where you will have the most difficulty. But the good news is you only need to run this once and then you can update change your immunozation scenarios as you like! 
 
-This step uses the R scripts in the ```2. Calibration``` folder. ```rsv_dynamics.R``` is the function which runs the model equations. ```model_calibration.R``` is the script which uploads the data, calls the rsv_dynamics function, and uses maximum likelihood estimation to estimate the model parameters. You will use the ```model_calibration.R``` script. As shown in the table at the top of the page, many of the parameters are fixed based on earlier papers. 
+This step uses the R scripts in the ```2. Calibration``` folder. ```model_dynamics.R``` is the function which runs the model equations. ```model_calibration.R``` is the script which uploads the data, calls the rsv_dynamics function, and uses maximum likelihood estimation to estimate the model parameters. You will use the ```model_calibration.R``` script. As shown in the table at the top of the page, many of the parameters are fixed based on earlier papers. 
 
 The initial step uses Maximil Likelihood Estimation to fit 4 parameters. The initial step is fitting only to the pre-pandemic time period (before March 2020). 
  1.  The baseline transmission rate (&beta;), bounded between 6 and 9.
@@ -87,8 +87,24 @@ In addition to fitting the reductions in contacts, the model will fit a new repo
 After completing parts 1 and 2 of the calibration step, you will have a figure that looks like this: 
 
 
-# Step 3 - Model the Impact of Interventions 
-This step uses the R scripts in the "Interventions" folder. intervention_models.R is the function that runs the model equations (with compartments for vaccination in seniors and monoclonal antibodies in infants). intervention_scenarios.R uses the parameters from Step 2 and estimates the impact of interventions under different scenarios for intervention coverage, effectiveness, and timing. Sample scenarios are provided, but these can be modified to answer your research questions. 
+# Step 3 - Interventions 
+This step uses the R scripts in the ```3. Interventions``` folder. ```MSIRS_scenarios.R``` is the script that runs the scenarios, ```MSIRS_intervention_models.R``` is teh script which runs the model equations and ```MSIRS_scenario_functions.R``` is an R script that interfaces between the other 2 scripts. You will open and run the ```MSIRS_scenarios.R``` script. The script is designed to run 8 scenarios with a combination of optimistic and pessimistic coverage and effectiveness for the three interventions (RSV vaccination for adults >60 years, RSV vaccination for pregnant women, RSV monoclonal antibodies for infants <8 months). See details in the table below. Many of the parameters for the vaccinations have been fixed based on clinical trials (see tables). In the script the user is able to easily set an optimistic and pessimistic scenario for cumulative coverage of the intervention. 
+
+Scenario Overview: 
+
+|---|Monoclonal Antibodies - Optimistic|Monoclonal Antibodies - Optimistic|Monoclonal Antibodies - Pessimistic|Monoclonal Antibodies - Pessimistic|
+|---|Maternal Vaccination - Optimistic|Maternal Vaccination - Pessimistic|Maternal Vaccination - Optimistic|Maternal Vaccination - Pessimistic|
+|Senior Vaccination - Optimistic|A|B|C|D|
+|Senior Vaccination - Pessimistic|E|F|G|H|
+
+
+
+
+
+This folder also includes a file ```coverage_curves_2023_24.rds``` which includes coverage curves for influenza, scaled between 0 and 1. 
+
+
+function that runs the model equations (with compartments for vaccination in seniors and monoclonal antibodies in infants). intervention_scenarios.R uses the parameters from Step 2 and estimates the impact of interventions under different scenarios for intervention coverage, effectiveness, and timing. Sample scenarios are provided, but these can be modified to answer your research questions. 
 
 ### Notes on interventions 
 The model assumes that interventions are providing protection against severe disease (hospitalization) but not against infection. The model also assumes that the interventions do not impact an individual's infectiousness if they become infected. 
