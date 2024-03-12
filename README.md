@@ -93,8 +93,8 @@ This step uses the R scripts in the ```3. Interventions``` folder. ```MSIRS_scen
 Scenario Overview: 
 |Senior Immunization|Infant Immunization||||
 |-|-|-|-|-|
-|---|Monoclonal Antibodies - Optimistic|Monoclonal Antibodies - Optimistic|Monoclonal Antibodies - Pessimistic|Monoclonal Antibodies - Pessimistic|
-|---|Maternal Vaccination - Optimistic|Maternal Vaccination - Pessimistic|Maternal Vaccination - Optimistic|Maternal Vaccination - Pessimistic|
+||Monoclonal Antibodies - Optimistic|Monoclonal Antibodies - Optimistic|Monoclonal Antibodies - Pessimistic|Monoclonal Antibodies - Pessimistic|
+||Maternal Vaccination - Optimistic|Maternal Vaccination - Pessimistic|Maternal Vaccination - Optimistic|Maternal Vaccination - Pessimistic|
 |Senior Vaccination - Optimistic|A|B|C|D|
 |Senior Vaccination - Pessimistic|E|F|G|H|
 
