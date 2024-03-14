@@ -157,8 +157,9 @@ The model assumes that interventions are providing protection against severe dis
 
 
 # Step 4 - Visualization 
-COMING SOON! 
-Shiny App for visualizing results 
+Code for basic visualizations of the scenario projections is provided (example below). A Shiny App for more interactive visualizations is coming soon! 
+![intervention_plots](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/7e429dee-8bee-44f2-98f1-e0d6085937f8)
+
 
 # Notes 
 A previous version of the model is provided in the ```MSIS Version``` folder. The workflow for this version is essentially the same, but the model structure is different. This version of the model does not include "R" compartments following infections. 
