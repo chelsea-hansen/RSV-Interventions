@@ -157,7 +157,7 @@ The model assumes that interventions are providing protection against severe dis
 
 
 # Step 4 - Visualization 
-Code for basic visualizations of the scenario projections (example below) is provided. A Shiny App for more interactive visualizations is coming soon! 
+Code for basic visualizations of the scenario projections is provided (example below). A Shiny App for more interactive visualizations is coming soon! 
 ![intervention_plots](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/7e429dee-8bee-44f2-98f1-e0d6085937f8)
 
 
