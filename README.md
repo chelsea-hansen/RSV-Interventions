@@ -15,17 +15,17 @@ Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and exte
 # Model Structure 
  <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="35%" align="left">
  
-The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections becomes less. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is provided below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015).
+The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections is lower. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is provided below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015).
 
 |Parameter|Fixed Value|
 |---|---|
 |*Duration of infectiousness - first infection (1/&gamma;<sub>1</sub>)|10 days|
 |*Duration of infectiousness - second infection (1/&gamma;<sub>2</sub>)|7 days|
-|*Duration of infectiousness - third or later infection (&gamma;<sub>3</sub>)|5 days|
+|*Duration of infectiousness - third or later infection (1/&gamma;<sub>3</sub>)|5 days|
 |*Relative risk of infection following first infection (&sigma;<sub>1</sub>)|0.76|
 |*Relative risk of infection following second infection (&sigma;<sub>2</sub>)|0.6|
-|*Relative risk of infection following third or later infection (1/&sigma;<sub>3</sub>)|0.4|
-|Relative risk of infection with maternal immunity (1/&sigma;<sub>3</sub>)|0.4|
+|*Relative risk of infection following third or later infection (&sigma;<sub>3</sub>)|0.4|
+|Relative risk of infection with maternal immunity (&sigma;<sub>3</sub>)|0.4|
 |Relative risk of hospitalization given infection for M compartment|0.7|
 |*Duration of maternal immunity (1/&omega;<sub>1</sub>)|112 days|
 |Duration of immunity following first and second infections (1/&omega;<sub>2</sub>)|182.625 days|
@@ -42,9 +42,9 @@ The model assumes that all infants are born into an "M" compartment (representin
 The data needed to run the model can be found in the ```1. Data``` folder. The data folder is further divided into 2 subfolders: ```RSV Data``` and ```Demographic Data```. Details for each subfolder are provided below
 
 ## RSV Data
-To run the model you will need to have a weekly time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations/ED visits. Example datasets from King County, Washington are provided. Please note, in the sample datasets values between 1-9 have been supressed and reinterpolated. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson distribution and you will get an error if the RSV time series has not been rounded to whole numbers. 
+To run the model you will need to have a weekly (or monthly) time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations (or ED visits if that is the time series you are using). Example datasets from King County, Washington are provided. Please note, in the sample datasets values between 1-9 have been supressed and reinterpolated. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series. The sample dataset is from January 2017 - November 2023. Note, a 3-week moving average has been applied to the time series, and values have been rounded to the nearest whole number. The model fitting procedure uses a Poisson distribution and you will get an error if the RSV time series has not been rounded to whole numbers. 
 
-The age distribution is divided into 2 time periods: pre-pandemic (Janaury 2017 - March 2020) and post-pandemic (April 2020 - November 2023). The example uses 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). The code could be modified to use different age groups. The code can also be run without the age distribution, however if this is done the projections based on the intervention scenarios will only be for all ages, not age-specific estimates. 
+The age distribution is divided into 2 time periods: pre-pandemic (Janaury 2017 - March 2020) and post-pandemic (April 2020 - November 2023). The example uses 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). The code could be modified to use different age groups.
 
 
 ## Demographic data
@@ -69,6 +69,7 @@ To run the next step (Calibration) you will need 7 datasets.
 5. ```other_parms.rds``` - created with the ```data_prep.R``` R script
 6. The birth rate dataset created with the ```data_prep.R``` R script (example provided as ```births_kingcounty.rds```
 7. ```contact_POLYMOD.rds``` - already provided in the correct format.
+
 Please make sure you have prepared all of these datasets before moving to the next step. 
    
 # Step 2 - Calibration
@@ -82,14 +83,14 @@ The initial step uses Maximum Likelihood Estimation to fit 4 parameters. The ini
  3.  The timing/phase of seasonal forcing (&phi;), bounded between 0 and 2&pi;.
  4.  The proportion of infections leading to reported hospitalizations - reporting rate (&theta;), bounded to be between 0 and 1. 
 
-The second step uses these fitted parameters to fit data during the pandemic through the 2022-23 rebound season. To fit this time period the code will reduce the number of contacts by different amounts at different points. In addition to reducing the number of contacts, external seeing of infections is reduced to zero from April 2020 - February 2021, and then gradually returns to normal by May 2021. 
+The second step uses these fitted parameters to fit data during the pandemic through the 2022-23 rebound season. To fit this time period the code will reduce the number of contacts by different amounts at different time points. In addition to reducing the number of contacts, external seeing of infections is reduced to zero from April 2020 - February 2021, and then gradually returns to normal by May 2021. 
 
 Assumptions when fitting contact reductions: 
- 1. It is assumed that there is a reduction in contacts from April - June 2020, corresponding with stay-at-home-orders. The model will fit the amount of reduction (proportion between 0-1, with 1 representing pre-pandemic contact patterns)
- 2. It is assumed that following the end of stay-at-home orders, contacts remained lower into 2021. The model will fit the amount of reduction and the number of weeks contacts remained supressed.
- 3. It is assumed that contacts began to return to normal in 2021. The model will estimate how long this ramp-up took and what level it reached by the end of 2021.
- 4. It is assumed that there was another drop in contacts coinciding with the emergence of the Omicron variant in winter 2021-2022. The model will fit the amount and duration of this reduction.
- 5. It is assumed that following the initial Omicron wave, contacts gradually increased through 2022, returning to pre-pandemic levels by the fall of 2022. The model will fit the number of weeks this return to normal took.
+ 1. It is assumed that there is a reduction in contacts from April - June 2020, corresponding with stay-at-home-orders. The model will fit the magnitude of the reduction (proportion between 0-1, with 1 representing pre-pandemic contact patterns)
+ 2. It is assumed that following the end of stay-at-home orders, contacts remained lower into 2021. The model will fit the magnitude of the reduction and the number of weeks contacts remained supressed.
+ 3. It is assumed that contacts began to return to normal in 2021. The model will estimate the level of contacts by the end of 2021.
+ 4. It is assumed that there was another drop in contacts coinciding with the emergence of the Omicron variant in winter 2021-2022. The model will fit the magnitude and duration of this reduction.
+ 5. It is assumed that following the initial Omicron wave, contacts gradually increased through 2022, returning to pre-pandemic levels by the fall of 2022. The model will fit the number of weeks over which this return to normal occurs.
 
 In addition to fitting the reductions in contacts, the model will fit a new reporting rate to account for increases in testing and RSV case reporting. The new reporting rate is bounded between the pre-pandemic reporting rate, and a 100% increase. 
 
@@ -97,7 +98,7 @@ After completing parts 1 and 2 of the calibration step, you will have a figure t
 
 <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/08c3d85f-78ec-4203-a02a-68013e36ae75" width="80%" height="80%" align="center">
 
-The last part of the ```Calibration.R``` script uses Latin Hypercube Sampling to sample paramters from a plausible range around the fitted parameters (+/- 3%). It saves two versions one with 100 and one with 1000 samples. 
+The last part of the ```Calibration.R``` script uses Latin Hypercube Sampling to sample parameter values from a plausible range around the fitted parameters (+/- 3%). Two versions are saved, one with 100 samples and the other with 1000 samples. These sets of parameter values will be used for estimating confidence intervals around the model projections. 
 
 # Step 3 - Interventions 
 This step uses the R scripts in the ```3. Interventions``` folder. ```MSIRS_scenarios.R``` is the script that runs the scenarios, ```MSIRS_intervention_models.R``` is the script which runs the model equations and ```MSIRS_scenario_functions.R``` is an R script that interfaces between the other 2 scripts. You will open and run the ```MSIRS_scenarios.R``` script. The script is designed to run 9 scenarios: 1 counterfactual (no interventions) plus 8 combinations of optimistic and pessimistic coverage and effectiveness for the three interventions (RSV vaccination for adults >60 years, RSV vaccination for pregnant women, RSV monoclonal antibodies for infants <8 months). See details in the table below. Many of the parameters for the immunizations have been fixed based on clinical trials (see tables). This folder also includes a file ```coverage_curves_2023_24.rds``` which includes coverage curves scaled between 0 and 1. In the script the user is able to easily set an optimistic and pessimistic scenario for cumulative coverage of the intervention using these curves. 
