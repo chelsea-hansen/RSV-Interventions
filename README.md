@@ -73,7 +73,7 @@ To run the next step (Calibration) you will need 7 datasets.
 Please make sure you have prepared all of these datasets before moving to the next step. 
    
 # Step 2 - Calibration
-This step is the trickiest step in the process and likely where you will have the most difficulty. But the good news is you only need to run this once and then you can update and change your immunization scenarios as much as you like! 
+Part 1: This step is the trickiest step in the process and likely where you will have the most difficulty. But the good news is you only need to run this once and then you can update and change your immunization scenarios as much as you like! 
 
 This step uses the R scripts in the ```2. Calibration``` folder. ```model_dynamics.R``` is the function which runs the model equations. ```model_calibration.R``` is the script which uploads the data, calls the model_dynamics function, and uses Maximum Likelihood Estimation to estimate the model parameters. You will use the ```model_calibration.R``` script. You do not need to open the ```model_dynamics.R``` script to run the code. As shown in the table at the top of the page, many of the parameters are fixed based on earlier papers. 
 
@@ -83,7 +83,7 @@ The initial step uses Maximum Likelihood Estimation to fit 4 parameters. The ini
  3.  The timing/phase of seasonal forcing (&phi;), bounded between 0 and 2&pi;.
  4.  The proportion of infections leading to reported hospitalizations - reporting rate (&theta;), bounded to be between 0 and 1. 
 
-The second step uses these fitted parameters to fit data during the pandemic through the 2022-23 rebound season. To fit this time period the code will reduce the number of contacts by different amounts at different time points. In addition to reducing the number of contacts, external seeing of infections is reduced to zero from April 2020 - February 2021, and then gradually returns to normal by May 2021. 
+Part 2: The second part of this step uses these fitted parameters to fit data during the pandemic through the 2022-23 rebound season. To fit this time period the code will reduce the number of contacts by different amounts at different time points. In addition to reducing the number of contacts, external seeing of infections is reduced to zero from April 2020 - February 2021, and then gradually returns to normal by May 2021. 
 
 Assumptions when fitting contact reductions: 
  1. It is assumed that there is a reduction in contacts from April - June 2020, corresponding with stay-at-home-orders. The model will fit the magnitude of the reduction (proportion between 0-1, with 1 representing pre-pandemic contact patterns)
