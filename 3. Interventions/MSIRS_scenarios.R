@@ -57,16 +57,16 @@ maternal_coverP = 0.1
 
 curves = readRDS("3. Interventions/coverage_curves_2023_24.rds")
 
-senior_curveO = curves$senior_weekly*senior_coverO
-senior_curveP = curves$senior_weekly*senior_coverP
+senior_curveO = curves$senior_week*senior_coverO
+senior_curveP = curves$senior_week*senior_coverP
 senior_counter = rep(0,tmax3)
 
-monoclonal_curveO = curves$monoclonal_weekly*monoclonal_coverO
-monoclonal_curveP = curves$monoclonal_weekly*monoclonal_coverP
+monoclonal_curveO = curves$monoclonal_week*monoclonal_coverO
+monoclonal_curveP = curves$monoclonal_week*monoclonal_coverP
 monoclonal_counter = rep(0,tmax3)
 
-maternal_curveO = curves$maternal_weekly*maternal_coverO
-maternal_curveP = curves$maternal_weekly*maternal_coverP
+maternal_curveO = curves$maternal_week*maternal_coverO
+maternal_curveP = curves$maternal_week*maternal_coverP
 maternal_counter = rep(0,tmax3)
 
 # model parameters and Latin hypercube sampling ----------------------------------
