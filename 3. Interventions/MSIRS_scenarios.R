@@ -8,7 +8,6 @@ library(zoo)
 
 
 "%notin%" = Negate('%in%')
-setwd("C:/Users/hansencl/OneDrive - National Institutes of Health/Desktop/GitHub Updates")
 
 #This part is similar to the first part of the model calibration code
 ## reading in and preparing data 
@@ -16,12 +15,12 @@ setwd("C:/Users/hansencl/OneDrive - National Institutes of Health/Desktop/GitHub
 
 # Read in data and model set-up -------------------------------------------
 #Compartment initiations - this time use the interventions version 
-yinit = readRDS("Data/Demographic Data/yinit_interventions.rds") 
+yinit = readRDS("1. Data/Demographic Data/yinit_interventions.rds") 
 yinit=as.matrix(yinit)
-yinit.vector = readRDS("Data/Demographic Data/yinit.vector_interventions.rds")
+yinit.vector = readRDS("1. Data/Demographic Data/yinit.vector_interventions.rds")
 
 #birth rates 
-birth <-readRDS('Data/Demographic Data/births_kingcounty.rds') %>% select(-date)
+birth <-readRDS('1. Data/Demographic Data/births_kingcounty.rds') %>% select(-date)
 birth = as.matrix(birth)
 
 #vector of data from burn-in through projection period 
@@ -35,12 +34,12 @@ times <- seq(1, tmax3, by =1)
 
 
 #Upload the POLYMOD contact matrix, already aggregated to relevant age groups 
-contact <- readRDS('Data/Demographic Data/contact_POLYMOD.rds')
+contact <- readRDS('1. Data/Demographic Data/contact_POLYMOD.rds')
 
 #upload the other parameters - weekly seeding and death/migration rates 
-seed = readRDS("Data/Demographic Data/other_parms.rds")[1]
-um = readRDS("Data/Demographic Data/other_parms.rds")[2]*-1
-pop = readRDS("Data/Demographic Data/other_parms.rds")[3]
+seed = readRDS("1. Data/Demographic Data/other_parms.rds")[1]
+um = readRDS("1. Data/Demographic Data/other_parms.rds")[2]*-1
+pop = readRDS("1. Data/Demographic Data/other_parms.rds")[3]
 
 
 # Define coverage scenarios ------------------------------------------
@@ -56,7 +55,7 @@ maternal_coverP = 0.1
 
 # Upload coverage curves and apply scenarios  -----------------------------
 
-curves = readRDS("Interventions/coverage_curves_2023_24.rds")
+curves = readRDS("3. Interventions/coverage_curves_2023_24.rds")
 
 senior_curveO = curves$senior_weekly*senior_coverO
 senior_curveP = curves$senior_weekly*senior_coverP
@@ -73,14 +72,14 @@ maternal_counter = rep(0,tmax3)
 # model parameters and Latin hypercube sampling ----------------------------------
 
 #upload parameters fit with MLE 
-fitLL = readRDS("Calibration/parameters_6Mar24.rds")
+fitLL = readRDS("2. Calibration/parameters_6Mar24.rds")
 baseline.txn.rate=6+(3*(exp(fitLL$par[1]))) / (1+exp(fitLL$par[1]))
 b1=exp(fitLL$par[2])
 phi=(2*pi*(exp(fitLL$par[3]))) / (1+exp(fitLL$par[3]))
 reporting_rate = 1/(1+exp(-fitLL$par[4]))
 
 
-pandLL = readRDS("Calibration/NPI_6Mar24.rds")
+pandLL = readRDS("2. Calibration/NPI_6Mar24.rds")
 
 time1 = round(exp(pandLL$par[1]))
 time2 = round(exp(pandLL$par[2]))
@@ -103,11 +102,11 @@ npi = data.frame(npis=c(rep(1,tmax1),rep(npi1,13),rep(npi2,time1),rep(NA,time2),
   mutate(npis= na_interpolation(npis, method="linear"))
 npi = npi$npis
 
-reporting = readRDS("Calibration/age_specific_reporting_rates.rds")
+reporting = readRDS("2. Calibration/age_specific_reporting_rates.rds")
 age_reporting=c(reporting[3,])#mean value to use for point estimates 
 
 #lhs datasets
-new_parms = readRDS("Calibration/lhs_resampling100.rds")
+new_parms = readRDS("lhs_resampling100.rds")
 rep_num=100 #which version you are using (100 replicates or 1000 replicates).
 #version with 1000 replicates is recommended but will take ~2 hours to run for each scenario. Can be done late after everything is running smoothly 
 
@@ -115,8 +114,8 @@ rep_num=100 #which version you are using (100 replicates or 1000 replicates).
 # function to fit intervention scenarios (no projection intervals) ------------------------------------------
 ## Read in transmission dynamic model
 
-source("Interventions/MSIRS_intervention_model.R")
-source("Interventions/MSIRS_scenario_functions.R")
+source("3. Interventions/MSIRS_intervention_model.R")
+source("3. Interventions/MSIRS_scenario_functions.R")
 
 # Counterfactual  ---------------------------------------------------------
 
@@ -455,3 +454,5 @@ all_scenarios_PI=rbind(counterfact_PI,ScenarioA_PI,ScenarioB_PI,ScenarioC_PI,Sce
                     ScenarioE_PI,ScenarioF_PI,ScenarioG_PI,ScenarioH_PI) %>% 
   filter(!is.na(sample))
 saveRDS(all_scenarios_PI,"scenarios_with_PI.rds")
+
+

@@ -153,7 +153,7 @@ interventions_PI = function(birth_dose, #timing and coverage of nirsevimab birth
     parmset<-list(PerCapitaBirthsYear=birth,
                   WidthAgeClassMonth=c(rep(2,times=6), 12,12*3, 60, 120, 240, 240, 240),
                   DurationMatImmunityDays=112,
-                  baseline.txn.rate=baseline.txn.rate,
+                  baseline.txn.rate=new_parms[l,"beta"],
                   RRHm = 0.7,
                   b1=new_parms[l,"b1"],
                   phi=new_parms[l,"phi"],

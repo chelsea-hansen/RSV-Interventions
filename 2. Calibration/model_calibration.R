@@ -90,7 +90,7 @@ parmset<-list(PerCapitaBirthsYear=birth,
 
 
 ## Read in transmission dynamic model
-source("Calibration/model_dynamics.R")
+source("2. Calibration/model_dynamics.R")
 
 
 fitmodel <-  function(parameters,dat) {  
@@ -156,8 +156,7 @@ fitLL <- optim(par = c(0,-2,0,0),
                control = list(fnscale=-1))# the log likelihood is negative; here we maximize the log likelihood)
 #save your parameters 
 #saveRDS(fitLL, "Calibration/parameters_6Mar24.rds")
-fitLL = readRDS("Calibration/parameters_6Mar24.rds")
-
+fitLL = readRDS("2. Calibration/parameters_6Mar24.rds")
 
 
 baseline.txn.rate=6+(3*(exp(fitLL$par[1]))) / (1+exp(fitLL$par[1]))
@@ -551,13 +550,17 @@ age_rates2
 age_rates_mean = (age_rates1+age_rates2)/2
 age_rates = rbind(age_rates1, age_rates2, age_rates_mean)
 saveRDS(age_rates, "age_specific_reporting_rates.rds")
-
+age_rates = readRDS("2. Calibration/age_specific_reporting_rates.rds")
+age_rates1 = c(age_rates[1,])
+age_rates2 = c(age_rates[2,])
 # Latin Hypercube Sampling of fitted parameters ---------------------------
 #LHS bounds - adding and subtracting 3% from the phase and amplitude 
-b1_lower = b1*.97
-b1_upper = b1*1.03
-phi_lower = phi*.97
-phi_upper = phi*1.03
+beta_lower = fitLL$par[1]*.9
+beta_upper = fitLL$par[1]*1.1
+b1_lower = fitLL$par[2]*.9
+b1_upper = fitLL$par[2]*1.1
+phi_lower = fitLL$par[3]*.9
+phi_upper = fitLL$par[3]*1.1
 h1_lower = age_rates1[1]
 h1_upper = age_rates2[1]
 h2_lower = age_rates1[2]
@@ -574,17 +577,22 @@ h5_upper = age_rates2[5]
 #draw 100 samples 
 set.seed(123)
 h=100
-lhs<-maximinLHS(h,7)
+lhs<-maximinLHS(h,8)
 
 
 new_parms <- cbind(
-  b1 = lhs[,1]*(b1_upper-b1_lower)+b1_lower,
-  phi = lhs[,2]*(phi_upper-phi_lower)+phi_lower,
-  h1 = lhs[,3]*(h1_upper-h1_lower)+h1_lower,
-  h2 = lhs[,4]*(h2_upper-h2_lower)+h2_lower,
-  h3 = lhs[,5]*(h3_upper-h3_lower)+h3_lower,
-  h4 = lhs[,6]*(h4_upper-h4_lower)+h4_lower,
-  h5 = lhs[,7]*(h5_upper-h5_lower)+h5_lower)
+  beta = lhs[,1]*(beta_upper-beta_lower)+beta_lower,
+  b1 = lhs[,2]*(b1_upper-b1_lower)+b1_lower,
+  phi = lhs[,3]*(phi_upper-phi_lower)+phi_lower,
+  h1 = lhs[,4]*(h1_upper-h1_lower)+h1_lower,
+  h2 = lhs[,5]*(h2_upper-h2_lower)+h2_lower,
+  h3 = lhs[,6]*(h3_upper-h3_lower)+h3_lower,
+  h4 = lhs[,7]*(h4_upper-h4_lower)+h4_lower,
+  h5 = lhs[,8]*(h5_upper-h5_lower)+h5_lower)
+#transform amplitude and phase
+new_parms[,"beta"]= 6+(3*(exp(new_parms[,"beta"]))) / (1+exp(new_parms[,"beta"]))
+new_parms[,"b1"] = exp(new_parms[,"b1"])
+new_parms[,"phi"] = (2*pi*(exp(new_parms[,"phi"]))) / (1+exp(new_parms[,"phi"]))
 saveRDS(new_parms,"lhs_resampling100.rds")
 
 
@@ -592,17 +600,21 @@ saveRDS(new_parms,"lhs_resampling100.rds")
 #Draw 1000 samples 
 set.seed(123)
 h=1000
-lhs<-maximinLHS(h,7)
+lhs<-maximinLHS(h,8)
 
 
 new_parms2 <- cbind(
-  b1 = lhs[,1]*(b1_upper-b1_lower)+b1_lower,
-  phi = lhs[,2]*(phi_upper-phi_lower)+phi_lower,
-  h1 = lhs[,3]*(h1_upper-h1_lower)+h1_lower,
-  h2 = lhs[,4]*(h2_upper-h2_lower)+h2_lower,
-  h3 = lhs[,5]*(h3_upper-h3_lower)+h3_lower,
-  h4 = lhs[,6]*(h4_upper-h4_lower)+h4_lower,
-  h5 = lhs[,7]*(h5_upper-h5_lower)+h5_lower)
+  beta = lhs[,1]*(beta_upper-beta_lower)+beta_lower,
+  b1 = lhs[,2]*(b1_upper-b1_lower)+b1_lower,
+  phi = lhs[,3]*(phi_upper-phi_lower)+phi_lower,
+  h1 = lhs[,4]*(h1_upper-h1_lower)+h1_lower,
+  h2 = lhs[,5]*(h2_upper-h2_lower)+h2_lower,
+  h3 = lhs[,6]*(h3_upper-h3_lower)+h3_lower,
+  h4 = lhs[,7]*(h4_upper-h4_lower)+h4_lower,
+  h5 = lhs[,8]*(h5_upper-h5_lower)+h5_lower)
+new_parms2[,"beta"]= 6+(3*(exp(new_parms2[,"beta"]))) / (1+exp(new_parms2[,"beta"]))
+new_parms2[,"b1"] = exp(new_parms2[,"b1"])
+new_parms2[,"phi"] = (2*pi*(exp(new_parms2[,"phi"]))) / (1+exp(new_parms2[,"phi"]))
 saveRDS(new_parms2,"lhs_resampling1000.rds")
 
 
