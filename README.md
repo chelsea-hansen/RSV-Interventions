@@ -158,8 +158,8 @@ The model assumes that interventions are providing protection against severe dis
 
 
 # Step 4 - Visualization 
-Code for basic visualizations of the scenario projections is provided (example below). A Shiny App for more interactive visualizations is coming soon! 
-![intervention_plots](https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/7e429dee-8bee-44f2-98f1-e0d6085937f8)
+Visualize your results in the Shiny App! Code is provided in the ```4. Visualize``` folder and a working example is available [here](https://chelsea-doing-epi.shinyapps.io/rsv-app/)
+After you have run the code in the ```3. Interventions``` folder and saved the results, launch the Shiny App by opening the ```app.R``` script and selecting the green triangle "Run App" in the top right corner of the R Script window. 
 
 
 # Notes 
