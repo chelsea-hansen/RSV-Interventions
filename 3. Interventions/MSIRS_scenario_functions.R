@@ -107,7 +107,7 @@ interventions = function(birth_dose, #timing and coverage of nirsevimab birth do
     H1[,i]=
       hosp[i]*parmset$RRHm*parmset$sigma3*M[,i]*lambda1[,i]+
       hosp[i]*parmset$RRHn*parmset$RRIn*parmset$sigma3*Mn[,i]*lambda1[,i]+
-      hosp[i]*parmset$RRHv*parmset$RRIv*parmset$sigma3*Mv[,i]*lambda1[,i]+
+      hosp[i]*parmset$RRHm*hosp[i]*parmset$RRHv*parmset$RRIv*parmset$sigma3*Mv[,i]*lambda1[,i]+
       hosp[i]*parmset$RRHn*parmset$RRIn*N[,i]*lambda1[,i]+
       hosp[i]*S0[,i]*lambda1[,i]+
       hosp[i]*Si[,i]*lambda1[,i]+
@@ -248,7 +248,7 @@ interventions_PI = function(birth_dose, #timing and coverage of nirsevimab birth
       H1[,i]=
         hosp[i]*parmset$RRHm*parmset$sigma3*M[,i]*lambda1[,i]+
         hosp[i]*parmset$RRHn*parmset$RRIn*parmset$sigma3*Mn[,i]*lambda1[,i]+
-        hosp[i]*parmset$RRHv*parmset$RRIv*parmset$sigma3*Mv[,i]*lambda1[,i]+
+        hosp[i]*parmset$RRHm*hosp[i]*parmset$RRHv*parmset$RRIv*parmset$sigma3*Mv[,i]*lambda1[,i]+
         hosp[i]*parmset$RRHn*parmset$RRIn*parmset$RRHm*N[,i]*lambda1[,i]+
         hosp[i]*S0[,i]*lambda1[,i]+
         hosp[i]*Si[,i]*lambda1[,i]+

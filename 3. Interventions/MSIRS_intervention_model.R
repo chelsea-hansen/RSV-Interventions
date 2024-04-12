@@ -100,7 +100,9 @@ MSIRS_interventions <- function(t,y,parms){
   colnames(dy) <- colnames(States)
   
   period.birth.rate <- log(parms$PerCapitaBirthsYear[t,]+1)/period #adjust annual birthrates to weekly scale
-
+#birth_N = log(birth_N+1)
+#birth_V = log(birth_V+1)
+#cup_N = log(cup_N+1)
   #mu represents aging to the next class
   #um is death rate/emigration; adjust it to reproduce population growth
   
@@ -111,9 +113,9 @@ MSIRS_interventions <- function(t,y,parms){
     cup_N*sum(States[1:4,"M"])-
     (omega+(mu+um))*M +
     Aging.Prop*c(0,M[1:(N.ages-1)]) 
-  
+  birth_N=0.4
   # newborns who receive monoclonals 
-  dy[,'Mn'] <- birth_N*period.birth.rate*sum(States) + cup_N*sum(States[1:4,"M"])- 
+  dy[,'Mn'] <- birth_N*period.birth.rate*sum(States) + cup_N*sum(States[1:4,"M"]) -
     RRIn*parms$sigma3*lambda*Mn - 
     waningN*Mn-
     (mu+um)*Mn +
@@ -121,13 +123,13 @@ MSIRS_interventions <- function(t,y,parms){
   
   dy[,'Mv'] <- birth_V*period.birth.rate*sum(States) - 
     RRIn*parms$sigma3*lambda*Mv - 
-    waningN*Mv-
+    waningV*Mv-
     (mu+um)*Mv +
     Aging.Prop*c(0,Mv[1:(N.ages-1)]) #aging in
   
   # infants <8 months who did not receive nirsevimab at birth but receive a catch-up dose ahead of the season
   # these infants can be in the M or S0 compartments 
-  dy[,'N'] <- cup_N*sum(States[1:4,"S0"]) - 
+  dy[,'N'] <- cup_N*sum(States[1:4,"S0"])  - 
     waningN*N-
     RRIn*lambda*N -
     (mu + um)*N + 
