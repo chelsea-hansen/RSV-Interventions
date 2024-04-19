@@ -107,7 +107,7 @@ interventions = function(birth_dose, #timing and coverage of nirsevimab birth do
     H1[,i]=
       hosp[i]*parmset$RRHm*parmset$sigma3*M[,i]*lambda1[,i]+
       hosp[i]*parmset$RRHn*parmset$RRIn*parmset$sigma3*Mn[,i]*lambda1[,i]+
-      hosp[i]*parmset$RRHm*hosp[i]*parmset$RRHv*parmset$RRIv*parmset$sigma3*Mv[,i]*lambda1[,i]+
+      hosp[i]*parmset$RRHm*parmset$RRHv*parmset$RRIv*parmset$sigma3*Mv[,i]*lambda1[,i]+
       hosp[i]*parmset$RRHn*parmset$RRIn*N[,i]*lambda1[,i]+
       hosp[i]*S0[,i]*lambda1[,i]+
       hosp[i]*Si[,i]*lambda1[,i]+
@@ -122,7 +122,6 @@ interventions = function(birth_dose, #timing and coverage of nirsevimab birth do
   results = data.frame(cbind(H2[(t0-(tmax3-tmax2)):t0,],rowSums(H2[(t0-(tmax3-tmax2)):t0,])))
   names(results)=c("<6m",">6m","1-4yr","5-59yrs","60+yrs","All ages")
   results$date = dates$date[tmax2:tmax3]
-  
   
   return(results)
 }
@@ -243,20 +242,20 @@ interventions_PI = function(birth_dose, #timing and coverage of nirsevimab birth
     hosp = c(rep(parmset$h1,3),rep(parmset$h2,3),rep(parmset$h3,2),rep(parmset$h4,4),parmset$h5)
     
     H1=matrix(0,nrow=t0,ncol=al)#Number of hospitalizations by age
-    
     for (i in 1:al){
       H1[,i]=
         hosp[i]*parmset$RRHm*parmset$sigma3*M[,i]*lambda1[,i]+
         hosp[i]*parmset$RRHn*parmset$RRIn*parmset$sigma3*Mn[,i]*lambda1[,i]+
-        hosp[i]*parmset$RRHm*hosp[i]*parmset$RRHv*parmset$RRIv*parmset$sigma3*Mv[,i]*lambda1[,i]+
-        hosp[i]*parmset$RRHn*parmset$RRIn*parmset$RRHm*N[,i]*lambda1[,i]+
-        hosp[i]*S0[,i]*lambda1[,i]+
-        hosp[i]*Si[,i]*lambda1[,i]+
-        hosp[i]*parmset$sigma1*S1[,i]*lambda1[,i]+
-        hosp[i]*parmset$sigma2*S2[,i]*lambda1[,i]+
-        hosp[i]*parmset$sigma3*S3[,i]*lambda1[,i]+
-        hosp[i]*parmset$RRIs*parmset$RRHs*parmset$sigma3*Vs1[,i]*lambda1[,i]+
-        hosp[i]*parmset$RRIs*parmset$RRHs*parmset$sigma3*Vs2[,i]*lambda1[,i]}
+       hosp[i]*parmset$RRHm*parmset$RRHv*parmset$RRIv*parmset$sigma3*Mv[,i]*lambda1[,i]+
+       hosp[i]*parmset$RRHn*parmset$RRIn*parmset$RRHm*N[,i]*lambda1[,i]+
+       hosp[i]*S0[,i]*lambda1[,i]+
+       hosp[i]*Si[,i]*lambda1[,i]+
+      hosp[i]*parmset$sigma1*S1[,i]*lambda1[,i]+
+       hosp[i]*parmset$sigma2*S2[,i]*lambda1[,i]+
+       hosp[i]*parmset$sigma3*S3[,i]*lambda1[,i]+
+       hosp[i]*parmset$RRIs*parmset$RRHs*parmset$sigma3*Vs1[,i]*lambda1[,i]+
+       hosp[i]*parmset$RRIs*parmset$RRHs*parmset$sigma3*Vs2[,i]*lambda1[,i]}
+    
     
     
     H2= cbind(rowSums(H1[,1:3]),rowSums(H1[,4:6]),rowSums(H1[,7:8]),rowSums(H1[,9:12]),H1[,13]) 
