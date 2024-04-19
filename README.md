@@ -158,7 +158,7 @@ The model assumes that interventions are providing protection against severe dis
 
 
 # Step 4 - Visualization 
-Visualize your results in the Shiny App! Code is provided in the ```RSV-Scenarios-Shiny-App`` folder and a working example is available [here](https://chelsea-doing-epi.shinyapps.io/rsv-app/).
+Visualize your results in the Shiny App! Code is provided in the ```RSV-Scenarios-Shiny-App``` folder and a working example is available [here](https://chelsea-doing-epi.shinyapps.io/rsv-app/).
 After you have run the code in the ```3. Interventions``` folder and saved the results, launch the Shiny App by opening the ```app.R``` script in the ```RSV-Scenarios-Shiny-App``` folder and selecting the green triangle "Run App" in the top right corner of the R Script window. 
 
 
