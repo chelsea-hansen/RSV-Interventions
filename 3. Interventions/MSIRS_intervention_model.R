@@ -113,7 +113,7 @@ MSIRS_interventions <- function(t,y,parms){
     cup_N*sum(States[1:4,"M"])-
     (omega+(mu+um))*M +
     Aging.Prop*c(0,M[1:(N.ages-1)]) 
-  birth_N=0.4
+  
   # newborns who receive monoclonals 
   dy[,'Mn'] <- birth_N*period.birth.rate*sum(States) + cup_N*sum(States[1:4,"M"]) -
     RRIn*parms$sigma3*lambda*Mn - 
