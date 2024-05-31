@@ -1,3 +1,6 @@
+**We will be hosting a webinar through CSTE on July 25, 2024 1-2pm Eastern Time to explain the model and code posted here. More information, including a registration link will be posted here when available.**
+
+
 In 2023 several new immunizations for RSV were approved. These include 2 vaccines for adults >=60 years, a vaccination for pregnant women (to protect newborns), and an extended half-life monoclonal antibody for infants <8 months. The R scripts and datasets provided here fit a deterministic MSIRS model to RSV hospitalizations and provide projections for the impact of these new interventions under optimistic and pessimistic scenarios for coverage and effectiveness. 
 
 For more information about recommendations for these new immunizations please see: https://www.cdc.gov/vaccines/vpd/rsv/index.html
