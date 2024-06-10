@@ -82,7 +82,7 @@ saveRDS(yinit[,1:13],"Demographic Data/yinit.rds")#save a version that does not 
 
 #format the data for feeding into the model 
 N_ages <- nrow(yinit) 
-agenames <- c("<2m","2-3m","4-5m","6-7m","8-9m","10-11m","1Y","2-4Y","5-9Y","10-19Y","20-39Y","40-64Y","65Y+")
+agenames <- c("<2m","2-3m","4-5m","6-7m","8-9m","10-11m","1Y","2-4Y","5-9Y","10-19Y","20-39Y","40-64Y","60Y+")
 al <- N_ages
 rownames(yinit) <- agenames
 yinit.vector <- as.vector(unlist(yinit))
