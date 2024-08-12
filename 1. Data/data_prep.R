@@ -1,21 +1,16 @@
 rm(list=ls())
-library(deSolve)
-library(RColorBrewer)
-library(reshape2)
+
 library(tidyverse)
-library(ggplot2)
-library(cowplot)
-library(sjstats)
 library(cdcfluview)
 library(zoo)
 library(imputeTS)
-library(readxl)
 library(tidycensus)
 
 "%notin%" = Negate('%in%')
-setwd("C:/Users/hansencl/OneDrive - National Institutes of Health/Desktop/GitHub Updates/Data")
 
-#This code prepares the demographic data needed to calibrate the model, including: 
+#This code prepares the demographic data needed to calibrate the model
+
+
   #1. Population size 
   #2. birth rates
   #3. net mortality and migration rates to recreate population growth 
@@ -48,7 +43,7 @@ pop_2022 = pop %>% filter(new_age=="all")
 pop_2022=pop_2022$population
 
 #total population in 1995 (start of burn-in period)
-pop_1995 = readRDS("Demographic Data/birth_rates_by_county.rds") %>% 
+pop_1995 = readRDS("1. Data/Demographic Data/birth_rates_by_county.rds") %>% 
   filter(state=="WA",county=="King County",year==1995)
 pop_1995=pop_1995$population
 
@@ -77,12 +72,12 @@ Vs2 = rep(0,13)
 yinit=matrix(unlist(cbind(M,S0,I1,R1,S1,I2,R2,S2,I3,R3,S3,I4,R4,Mn,Mv,N,Si,Vs1,Vs2)),byrow=FALSE,ncol=19)
 yinit[,1:2]= yinit[,1:2]*(pop_1995/pop_2022)#adjust population size to 1995 
 colnames(yinit) = c("M","S0","I1","R1","S1","I2","R2","S2","I3","R3","S3","I4","R4","Mn","Mv","N","Si","Vs1","Vs2")
-saveRDS(yinit,"Demographic Data/yinit_interventions.rds") #save the full version 
-saveRDS(yinit[,1:13],"Demographic Data/yinit.rds")#save a version that does not have the intervention compartments 
+saveRDS(yinit,"1. Data/Demographic Data/yinit_interventions.rds") #save the full version 
+saveRDS(yinit[,1:13],"1. Data/Demographic Data/yinit.rds")#save a version that does not have the intervention compartments 
 
 #format the data for feeding into the model 
 N_ages <- nrow(yinit) 
-agenames <- c("<2m","2-3m","4-5m","6-7m","8-9m","10-11m","1Y","2-4Y","5-9Y","10-19Y","20-39Y","40-64Y","65Y+")
+agenames <- c("<2m","2-3m","4-5m","6-7m","8-9m","10-11m","1Y","2-4Y","5-9Y","10-19Y","20-39Y","40-59Y","60Y+")
 al <- N_ages
 rownames(yinit) <- agenames
 yinit.vector <- as.vector(unlist(yinit))
@@ -95,15 +90,15 @@ for(i in 1:dim(name.array)[1]){
 name.vector <- as.vector(name.array)
 names(yinit.vector) <- name.vector
 
-saveRDS(yinit.vector, "Demographic Data/yinit.vector_interventions.rds")#save the full version 
-saveRDS(yinit.vector[1:169], "Demographic Data/yinit.vector.rds")#save a version without the intervention compartments 
+saveRDS(yinit.vector, "1. Data/Demographic Data/yinit.vector_interventions.rds")#save the full version 
+saveRDS(yinit.vector[1:169], "1. Data/Demographic Data/yinit.vector.rds")#save a version without the intervention compartments 
 
 #seeding 1 infection per 100,000 (based on 2022 population)
 seed = pop_2022/100000 #seeding 1 infection per 100,000 (based on 2022 population)
 
 
 # 2. Birth Rates --------------------------------------------------------
-births = readRDS("Demographic Data/birth_rates_by_county.rds") %>% 
+births = readRDS("1. Data/Demographic Data/birth_rates_by_county.rds") %>% 
   filter(state=="WA",county=="King County") %>% 
   mutate(mmwr_year=as.numeric(year),
          mmwr_week=as.numeric(1)) %>% 
@@ -135,7 +130,7 @@ birth_complete = data.frame(date = birth_interp$date,
                    V13 = rep(0,nrow(birth_interp)))
 
 
-saveRDS(birth_complete,"Demographic Data/births_kingcounty.rds")
+saveRDS(birth_complete,"1. Data/Demographic Data/births_kingcounty.rds")
 
 
 
@@ -144,8 +139,10 @@ saveRDS(birth_complete,"Demographic Data/births_kingcounty.rds")
 #will check later in the model, this value may need to be adjusted slightly 
 
 weeks = 1461 #number of weeks from January 1995 to December 2022 (check in births data frame)
+#weekly population growth divided by the average population size (from start of time series to end of time series)
 um = ((pop_2022-pop_1995)/weeks)/((pop_2022+pop_1995)/2)
 
 #save the parameters
 other_parms = c("seed"=seed, "um"=um,"pop"=pop_2022)
-saveRDS(other_parms,"Demographic Data/other_parms.rds")
+saveRDS(other_parms,"1. Data/Demographic Data/other_parms.rds")
+
