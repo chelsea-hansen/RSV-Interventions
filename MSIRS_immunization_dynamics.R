@@ -25,7 +25,6 @@ MSIRS_immunization_dynamics <- function(times,y,parms){
   #parameters for monoclonals 
   mono_01 = parms$monoclonal_01[times]
   mono_23 = parms$monoclonal_23[times]
-  
   mono_45 = parms$monoclonal_45[times]
   mono_67 = parms$monoclonal_67[times]
   waningN=1/(parms$waningN/length.step) #duration of nirsevimab protection
