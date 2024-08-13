@@ -1,5 +1,5 @@
 
-**I am currently working on updates and revisions to the code and workflow. Please check back on August 19, 20224 for updates** 
+**I am currently working on updates and revisions to the code and workflow. Please check back on August 19, 2024 for updates** 
 
 **We will be hosting a webinar through CSTE on September, 2024 12-1pm Eastern Time to explain the model and code posted here. Please register using this link:https://cste-org.zoom.us/webinar/register/WN_ZFPLhr8qQOOTkaiYE8XUOQ#/registration**
 
