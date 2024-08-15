@@ -1,13 +1,13 @@
 
 **We will be hosting a webinar through CSTE on September, 2024 12-1pm Eastern Time to explain the model and code posted here. Please register using this link:https://cste-org.zoom.us/webinar/register/WN_ZFPLhr8qQOOTkaiYE8XUOQ#/registration**
 
-In 2023 several new immunizations for RSV were approved. These include 2 vaccines for adults >=60 years, a vaccination for pregnant women (to protect newborns), and an extended half-life monoclonal antibody for infants <8 months. The R scripts and datasets provided here fit a deterministic MSIRS model to RSV hospitalizations and provide projections for the impact of these new interventions under optimistic and pessimistic scenarios for coverage and effectiveness. 
+In 2023 several new immunizations for RSV were approved. These include 2 vaccines for adults >=60 years, a vaccination for pregnant women (to protect newborns), and an extended half-life monoclonal antibody for infants <8 months. The R scripts and datasets provided here fit a deterministic MSIRS model to RSV hospitalizations in King County, Washington and provide projections for the impact of these new interventions under optimistic and pessimistic scenarios for coverage and effectiveness. 
 
 For more information about recommendations for these new immunizations please see: https://www.cdc.gov/vaccines/vpd/rsv/index.html
 
 
 # Acknowledgements
-This work was done in collaboration with Public Health Seattle & King County as part of a CSTE/CDC - supported initiative, "Development of forecast, analytic, and visualization tools to improve outbreak response and support public health decision making."
+This work was done in collaboration with Public Health - Seattle & King County as part of a CSTE/CDC - supported initiative, "Development of forecast, analytic, and visualization tools to improve outbreak response and support public health decision making."
 
 This model is an adaptation of earlier work, please see: Pitzer et al. and Zheng et al.
 
@@ -47,20 +47,21 @@ References: 1. Pitzer et al.; 2. Hodgson et al.; 3. Ohuma et al.
 # Step 1 - Data Requirements 
 ## RSV Data
 
-To run the model you will need to have a weekly (or monthly) time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations (or ED visits if that is the time series you are using). These should becount data not rates. We used data from King County, Washington. We hope to post these as example datasets soon. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series.  Note, if using a smoothed time series or concverting from hospitalization rates, you must rounded to the nearest whole number. The model fitting procedure uses a Poisson distribution and you will get an error if the RSV time series has not been rounded to whole numbers. 
+To run the model you will need to have a weekly (or monthly) time series of RSV hospitalizations (or ED visits) and an age distribution of RSV hospitalizations (or ED visits if that is the time series you are using). These should be count data not rates. We used data from King County, Washington. We hope to post these as example datasets soon. For the weekly time series it is best if you can have at least 3 years of data prior to the COVID-19 pandemic, however the code should work with a slightly shorter time series.  Note, if using a smoothed time series or converting from hospitalization rates, you must rounded to the nearest whole number. The model fitting procedure uses a Poisson distribution and you will get an error if the RSV time series has not been rounded to whole numbers. 
 
 The age distribution should be disaggregated into 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). The code could be modified to use different age groups.
 
 ## Demographic data
-The model will also require birth rates, net migration rates, and the age-specific population distribution. The ```1.data_prep.R``` R script will pull the necessary data using the ```tidycensus``` R package for the year 2022 (most recent available data). This code will create 3 datasets and save them together as a list. 1. The first dataset is all of the fixed parameter values. 
-2. The second dataset you will create is ```yinit.rds```. This dataset divides the population from 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into starting values for the model compartments. Note: these age groups are not the same as the age groups from the RSV age distributions. 
-3.The code will also save another format of this dataset ```yinit.vector.rds``` 
+The model will also require birth rates, net migration rates, and the age-specific population distribution. The ```1.data_prep.R``` R script will pull the necessary data using the ```tidycensus``` R package for the year 2022 (most recent available data). This code will create 3 datasets and save them together as a list. 
+1. The first dataset is all of the fixed parameter values.
+2. The second dataset you will create is ```yinit.rds```. This dataset divides the population from 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into starting values for the model compartments. Note: these age groups are not the same as the age groups from the RSV age distributions.
+3. The code will also save another format of this dataset ```yinit.vector.rds``` 
 
 ### Initial Values for Each Model Compartment 
 ![starting values](https://github.com/user-attachments/assets/2df800d8-c84f-4132-8d5d-299a128be010)
 
 
-The annual birth rate is converted to a weekly number of births and is used to introduce new individuals into the <2m age class. The model assumes that individuals age exponentially into the next age class with the rate of aging equal to the inverse of the time spent in each age class. The duration of the oldest age class was set to 20 years. The net migration rate was applied uniformly across age classes. We used an expanded version of the contact matrix described by Mossong et al to define contacts between age classes. 
+The annual birth rate is converted to a weekly number of births and is used to introduce new individuals into the <2m age class. The model assumes that individuals age exponentially into the next age class with the rate of aging equal to the inverse of the time spent in each age class. The duration of the oldest age class was set to 20 years. The net migration rate was applied uniformly across age classes. We used an expanded version of the contact matrix described by Mossong et al. to define contacts between age classes. 
 
 To run the next step (Calibration) you will need 3 things. 
 1. The RSV time series 
@@ -69,15 +70,7 @@ To run the next step (Calibration) you will need 3 things.
 
    
 # Step 2 - Calibration
-Part 1: This step is the trickiest step in the process and likely where you will have the most difficulty. But the good news is you only need to run this once and then you can update and change your immunization scenarios as much as you like! 
-In this step you will use the ```2. Calibration``` R script. This script uses Maximum Likelihood Estimation to fit 11 parameters (see table above). These include: 
-
- 1.  The baseline transmission rate (&beta;).
- 2.  The amplitude of seasonal forcing (*b*1).
- 3.  The timing/phase of seasonal forcing (&phi;), bounded between 0 and 2&pi;.
- 4-7.  Age-specific reporting rates for the proportion of infections leading to reported hospitalizations, bounded between 0 and 1.
- 8-11. Reductions in contacts for 4 periods during the 2020-2022, bounded between 0 and 1.
-
+In this step you will use the ```2. Calibration``` R script. This script uses Maximum Likelihood Estimation to fit 11 parameters (see table above). To fit the pandemic period the model will reduce the number of contacts at certain time points. The time points are fixed based on the assumptions below, but the model fits the magnitude of contact reductions. 
 Assumptions when fitting contact reductions: 
  1. It is assumed that there is a reduction in contacts from April - June 2020, corresponding with stay-at-home-orders. The model will fit the magnitude of the reduction.
  2. It is assumed that following the end of stay-at-home orders, contacts remained lower into 2021. The model will fit the magnitude of the reduction. 
@@ -85,7 +78,7 @@ Assumptions when fitting contact reductions:
  4. It is assumed that there was another drop in contacts coinciding with the emergence of the Omicron variant in winter 2021-2022. The model will fit the magnitude of this reduction.
  5. It is assumed that following the initial Omicron wave, contacts gradually increased through 2022, returning to pre-pandemic levels by the fall of 2022. 
 
-After completing parts 1 and 2 of the calibration step, you will have a figure that looks like this: 
+After completing the calibration step, you will have a figure that looks like this: 
 
 ![eFigure6](https://github.com/user-attachments/assets/c27ea29a-ed46-4487-85e2-308cb51bb718)
 
