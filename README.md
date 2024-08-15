@@ -21,13 +21,13 @@ The model assumes that all infants are born into an "M" compartment (representin
 |<sup>1</sup>Duration of infectiousness - first infection (1/&gamma;<sub>1</sub>)|10 days|
 |<sup>1</sup>Duration of infectiousness - second infection (1/&gamma;<sub>2</sub>)|7 days|
 |<sup>1</sup>Duration of infectiousness - third or later infection (1/&gamma;<sub>3</sub>)|5 days|
-|<sup>3</sup>Relative risk of infection following first infection (&sigma;<sub>1</sub>)|0.89|
-|<sup>3</sup>Relative risk of infection following second infection (&sigma;<sub>2</sub>)|0.72|
-|<sup>3</sup>Relative risk of infection following third or later infection (&sigma;<sub>3</sub>)|0.24|
+|<sup>2</sup>Relative risk of infection following first infection (&sigma;<sub>1</sub>)|0.89|
+|<sup>2</sup>Relative risk of infection following second infection (&sigma;<sub>2</sub>)|0.72|
+|<sup>2</sup>Relative risk of infection following third or later infection (&sigma;<sub>3</sub>)|0.24|
 |Relative risk of infection with maternal immunity (same as RR following third infection) (&sigma;<sub>3</sub>)|0.24|
 |<sup>1</sup>Duration of maternal immunity (1/&omega;<sub>1</sub>)|112 days|
-|<sup>4</sup>Duration of immunity following first and second infections (1/&omega;<sub>2</sub>)|182.625 days|
-|<sup>3</sup>Duration of immunity following third or later infections (1/&omega;<sub>3</sub>)|358.9 days|
+|<sup>3</sup>Duration of immunity following first and second infections (1/&omega;<sub>2</sub>)|182.625 days|
+|<sup>2</sup>Duration of immunity following third or later infections (1/&omega;<sub>3</sub>)|358.9 days|
 |<sup>1</sup>Relative infectiousness - second infections (&rho;<sub>1</sub>)|0.75|
 |<sup>1</sup>Relative infectiousness - third or later infections (&rho;<sub>2</sub>)|0.51|
 |Baseline transmission rate (&beta;)|Fitted|
@@ -41,6 +41,7 @@ The model assumes that all infants are born into an "M" compartment (representin
 |Proportion of contacts relative to the pre-pandemic period, July 2020 - March 2021|Fitted|
 |Proportion of contacts relative to the pre-pandemic period, October 2021 - December 2021|Fitted|
 |Proportion of contacts relative to the pre-pandemic period, January 2022 - June 2022|Fitted|
+References: 1. Pitzer et al.; 2. Hodgson et al.; 3. Ohuma et al. 
 
 # Step 1 - Data Requirements 
 ## RSV Data
@@ -50,7 +51,7 @@ To run the model you will need to have a weekly (or monthly) time series of RSV 
 The age distribution should be disaggregated into 5 age groups (<6 months, 6-11 months, 1-4 years, 5-59 years, 60+ years). The code could be modified to use different age groups.
 
 ## Demographic data
-The code will also require birth rates, net migration rates, and the age-specific population distribution. The ```1.data_prep.R``` R script will pull and format all of the necessary data using the ```tidycensus``` R package. This code will create 3 datasets and save them together as a list. 1. The first dataset is all of the fixed parameter values. 
+The model will also require birth rates, net migration rates, and the age-specific population distribution. The ```1.data_prep.R``` R script will pull the necessary data using the ```tidycensus``` R package for the year 2022 (most recent available data). This code will create 3 datasets and save them together as a list. 1. The first dataset is all of the fixed parameter values. 
 2. The second dataset you will create is ```yinit.rds```. This dataset divides the population from 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into starting values for the model compartments. Note: these age groups are not the same as the age groups from the RSV age distributions. 
 3.The code will also save another format of this dataset ```yinit.vector.rds``` 
 
@@ -102,6 +103,7 @@ Scenario Overview:
 |Monoclonal Abs & Maternal Vax =  Optimistic|A|B|
 |Monoclonal Abs & Maternal Vax = Pessimistic|C|D|
 
+
 ## Infant Immunizations
 The model now assumes that a proportion of infants are born to vaccinated mothers (Mv Compartment) and a proportion of infants receive monoclonal antibodies at or shortly after birth (Mn Compartment). These infants retain the same protection against infection as the M compartment, but have additional protection against hospitalization given infection. Additionally, some infants receive a monoclonal antibody a few months after birth (N Compartment). These infants do not have any protection against infection, but they do have protection against hospitalization given infection. When the protection wanes from these compartments (Mv, Mn, N), infants move to the Si compartment. This compartment is functionally the same as the S0 compartment, but ensures that infants do not receive two interventions. 
 
@@ -116,6 +118,7 @@ The model now assumes that a proportion of infants are born to vaccinated mother
 |Duration or protection from maternal vaccination (days)|180|180|
 |Effectiveness of maternal vaccination against hospitalization|55%|55%|
 |Cumulative coverage of maternal vaccination|50%|30%|
+References: Fleming-Dutra et al,; Jones et al. 
 
 ## Senior Vaccination 
 The vaccination compartment (Vs1) draws seniors from the S3 compartment. Current data suggests that the vaccine is effective for at least 2 seasons. Seniors spend approximately 1 year in the Vs1 compartment before waning to the Vs2 compartment for another year and then returning to the S3 compartment. Because the vaccine lasts for 2 years the optimistic and pessimistic coverage for the 2024-25 season includes the observed 25% coverage during the 2023-24 season. 
@@ -128,7 +131,7 @@ The vaccination compartment (Vs1) draws seniors from the S3 compartment. Current
 |Duration of protection from vaccination (days)|730.5|730.5|
 |Effectiveness of vaccine against hospitalization|80%|80%|
 |Cumulative coverage of vaccine|40%|30%|
-
+Reference: Britton et al. 
 
 ### Notes about interventions
 The model assumes that interventions are providing protection against severe disease (hospitalization) but not against infection. The model also assumes that the interventions do not impact an individual's infectiousness if they become infected. 
@@ -143,6 +146,18 @@ Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotempo
 
 Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
 
-# Notes 
+Hodgson D, Pebody R, Panovska-Griffiths J, Baguelin M, Atkins KE. "Evaluating the next generation of RSV intervention strategies: a mathematical modelling study and cost-effectiveness analysis". BMC Med. 2020. https://doi.org/10.1186/s12916-020-01802-8 
+
+Ohuma EO, Okiro EA, Ochola R, et al. "The natural history of respiratory syncytial virus in a birth cohort: the influence of age and previous infection on reinfection and disease." Am J Epidemiol. 2012. https://doi.org/10.1093/aje/kws257
+
+Mossong J, Hens N, Jit M, et al. "Social contacts and mixing patterns relevant to the spread of infectious diseases". PLoS Med. 2008. https://doi.org/10.1371/journal.pmed.0050074
+
+Britton A, Roper LE, Kotton CN, et al. Use of Respiratory Syncytial Virus Vaccines in Adults Aged ≥60 Years: Updated Recommendations of the Advisory Committee on Immunization Practices — United States, 2024. MMWR Morb Mortal Wkly Rep 2024;73:696-702. DOI: http://dx.doi.org/10.15585/mmwr.mm7332e1.
+
+Fleming-Dutra KE, Jones JM, Roper LE, et al. Use of the Pfizer Respiratory Syncytial Virus Vaccine During Pregnancy for the Prevention of Respiratory Syncytial Virus–Associated Lower Respiratory Tract Disease in Infants: Recommendations of the Advisory Committee on Immunization Practices — United States, 2023. MMWR Morb Mortal Wkly Rep 2023;72:1115–1122. DOI: http://dx.doi.org/10.15585/mmwr.mm7241e1
+
+Jones JM, Fleming-Dutra KE, Prill MM, et al. Use of Nirsevimab for the Prevention of Respiratory Syncytial Virus Disease Among Infants and Young Children: Recommendations of the Advisory Committee on Immunization Practices — United States, 2023. MMWR Morb Mortal Wkly Rep 2023;72:920–925. DOI: http://dx.doi.org/10.15585/mmwr.mm7234a4
+
+## Contact
 
 For questions or assistance, please contact chelsea.hansen@nih.gov
