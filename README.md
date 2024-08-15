@@ -19,23 +19,28 @@ The model assumes that all infants are born into an "M" compartment (representin
 |Parameter|Fixed Value|
 |---|---|
 |<sup>1</sup>Duration of infectiousness - first infection (1/&gamma;<sub>1</sub>)|10 days|
-|*Duration of infectiousness - second infection (1/&gamma;<sub>2</sub>)|7 days|
-|*Duration of infectiousness - third or later infection (1/&gamma;<sub>3</sub>)|5 days|
-|*Relative risk of infection following first infection (&sigma;<sub>1</sub>)|0.76|
-|*Relative risk of infection following second infection (&sigma;<sub>2</sub>)|0.6|
-|*Relative risk of infection following third or later infection (&sigma;<sub>3</sub>)|0.4|
-|Relative risk of infection with maternal immunity (&sigma;<sub>3</sub>)|0.4|
-|Relative risk of hospitalization given infection for M compartment|0.7|
-|*Duration of maternal immunity (1/&omega;<sub>1</sub>)|112 days|
-|Duration of immunity following first and second infections (1/&omega;<sub>2</sub>)|182.625 days|
-|Duration of immunity following third or later infections (1/&omega;<sub>3</sub>)|365.25 days|
-|*Relative infectiousness - second infections (&rho;<sub>1</sub>)|0.75|
-|*Relative infectiousness - third or later infections (&rho;<sub>2</sub>)|0.51|
+|<sup>1</sup>Duration of infectiousness - second infection (1/&gamma;<sub>2</sub>)|7 days|
+|<sup>1</sup>Duration of infectiousness - third or later infection (1/&gamma;<sub>3</sub>)|5 days|
+||<sup>3</sup>Relative risk of infection following first infection (&sigma;<sub>1</sub>)|0.89|
+||<sup>3</sup>Relative risk of infection following second infection (&sigma;<sub>2</sub>)|0.72|
+||<sup>3</sup>Relative risk of infection following third or later infection (&sigma;<sub>3</sub>)|0.24|
+|Relative risk of infection with maternal immunity (same as RR following third infection) (&sigma;<sub>3</sub>)|0.24|
+|<sup>1</sup>Duration of maternal immunity (1/&omega;<sub>1</sub>)|112 days|
+||<sup>4</sup>Duration of immunity following first and second infections (1/&omega;<sub>2</sub>)|182.625 days|
+||<sup>3</sup>Duration of immunity following third or later infections (1/&omega;<sub>3</sub>)|358.9 days|
+|<sup>1</sup>Relative infectiousness - second infections (&rho;<sub>1</sub>)|0.75|
+|<sup>1</sup>Relative infectiousness - third or later infections (&rho;<sub>2</sub>)|0.51|
 |Baseline transmission rate (&beta;)|Fitted|
 |Amplitude of seasonal forcing (*b*1)|Fitted|
 |Phase of seasonal forcing (&phi;)|Fitted|
-|Infections that lead to reported hospitalizations (&theta;)|Fitted|
-
+|Infections that lead to reported hospitalizations (<2m, 2-11 months fixed relative to this)|Fitted|
+|Infections that lead to reported hospitalizations (1-4yrs)|Fitted|
+|Infections that lead to reported hospitalizations (5-59 yrs)|Fitted|
+|Infections that lead to reported hospitalizations (60+ yrs)|Fitted|
+|Proportion of contacts relative to the pre-pandemic period, April 2020 - June 2020 |Fitted|
+|Proportion of contacts relative to the pre-pandemic period, July 2020 - March 2021|Fitted|
+|Proportion of contacts relative to the pre-pandemic period, October 2021 - December 2021|Fitted|
+|Proportion of contacts relative to the pre-pandemic period, January 2022 - June 2022|Fitted|
 
 # Step 1 - Data 
 The data needed to run the model can be found in the ```1. Data``` folder. The data folder is further divided into 2 subfolders: ```RSV Data``` and ```Demographic Data```. Details for each subfolder are provided below
