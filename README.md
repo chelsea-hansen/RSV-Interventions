@@ -1,6 +1,4 @@
 
-**I am currently working on updates and revisions to the code and workflow. Please check back on August 19, 2024 for updates** 
-
 **We will be hosting a webinar through CSTE on September, 2024 12-1pm Eastern Time to explain the model and code posted here. Please register using this link:https://cste-org.zoom.us/webinar/register/WN_ZFPLhr8qQOOTkaiYE8XUOQ#/registration**
 
 In 2023 several new immunizations for RSV were approved. These include 2 vaccines for adults >=60 years, a vaccination for pregnant women (to protect newborns), and an extended half-life monoclonal antibody for infants <8 months. The R scripts and datasets provided here fit a deterministic MSIRS model to RSV hospitalizations and provide projections for the impact of these new interventions under optimistic and pessimistic scenarios for coverage and effectiveness. 
@@ -11,20 +9,16 @@ For more information about recommendations for these new immunizations please se
 # Acknowledgements
 This work was done in collaboration with Public Health Seattle & King County as part of a CSTE/CDC - supported initiative, "Development of forecast, analytic, and visualization tools to improve outbreak response and support public health decision making."
 
-This model is an adaptation of earlier work, please see:
-
-Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotemporal Dynamics of Respiratory Syncytial Virus in the United States". PLOS Pathogens. 2015. https://doi.org/10.1371/journal.ppat.1004591
-
-Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
+This model is an adaptation of earlier work, please see: Pitzer et al. and Zheng et al.
 
 # Model Structure 
  <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/c53f4f2a-3a92-4ce3-8204-bafdbb18b74c" width="35%" height="35%" align="left">
  
-The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection and hospitalization given infection. After this protection wanes, infants become fully susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection. Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections is lower. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is provided below. Parameters marked with * have been adopted from the earlier work by (Pitzer et al, 2015).
+The model assumes that all infants are born into an "M" compartment (representing maternally derived immunity) with partial immunity against infection. After this protection wanes, infants become susceptible (S0). Following the first infection (I1) individuals have a short period of immunity from infection (R1). After this immunity wanes, individuals are susceptible again, but with a lower relative risk of infection (S1). Following each infection the duration of infectiousness becomes shorter, the duration of immunity increases, and the relative risk of future infections is lower. As mentioned above, this model is an adaptation of earlier work. The model has been modified to include a recovered "R" compartment following each infectious "I" compartment. A list of parameters is provided below. 
 
 |Parameter|Fixed Value|
 |---|---|
-|*Duration of infectiousness - first infection (1/&gamma;<sub>1</sub>)|10 days|
+|<sup>1</sup>Duration of infectiousness - first infection (1/&gamma;<sub>1</sub>)|10 days|
 |*Duration of infectiousness - second infection (1/&gamma;<sub>2</sub>)|7 days|
 |*Duration of infectiousness - third or later infection (1/&gamma;<sub>3</sub>)|5 days|
 |*Relative risk of infection following first infection (&sigma;<sub>1</sub>)|0.76|
@@ -168,8 +162,10 @@ The model assumes that interventions are providing protection against severe dis
 Visualize your results in the Shiny App! Code is provided in the ```RSV-Scenarios-Shiny-App``` folder and a working example is available [here](https://chelsea-doing-epi.shinyapps.io/rsv-app/).
 After you have run the code in the ```3. Interventions``` folder and saved the results, launch the Shiny App by opening the ```app.R``` script in the ```RSV-Scenarios-Shiny-App``` folder and selecting the green triangle "Run App" in the top right corner of the R Script window. 
 
+# References
+Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotemporal Dynamics of Respiratory Syncytial Virus in the United States". PLOS Pathogens. 2015. https://doi.org/10.1371/journal.ppat.1004591
+Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
 
 # Notes 
-A previous version of the model is provided in the ```MSIS Version``` folder. The workflow for this version is essentially the same, but the model structure is different. This version of the model does not include "R" compartments following infections. 
 
 For questions or assistance, please contact chelsea.hansen@nih.gov
