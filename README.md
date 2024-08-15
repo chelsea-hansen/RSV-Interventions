@@ -52,8 +52,11 @@ The age distribution should be disaggregated into 5 age groups (<6 months, 6-11 
 ## Demographic data
 The code will also require birth rates, net migration rates, and the age-specific population distribution. The ```1.data_prep.R``` R script will pull and format all of the necessary data using the ```tidycensus``` R package. This code will create 3 datasets and save them together as a list. 1. The first dataset is all of the fixed parameter values. 
 2. The second dataset you will create is ```yinit.rds```. This dataset divides the population from 13 age groups (<2m, 2-3m, 4-5m, 6-7, 8-9, 10-11m, 1y, 2-4y, 5-9y, 10-19y, 20-39y, 40-59y, 60+y) into starting values for the model compartments. Note: these age groups are not the same as the age groups from the RSV age distributions. 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/4f5419ff-a5d0-464b-b241-b7c7e32824e8" width="80%" height="80%" align="center">
 3.The code will also save another format of this dataset ```yinit.vector.rds``` 
+
+### Initial Values for Each Model Compartment 
+![starting values](https://github.com/user-attachments/assets/2df800d8-c84f-4132-8d5d-299a128be010)
+
 
 The annual birth rate is converted to a weekly number of births and is used to introduce new individuals into the <2m age class. The model assumes that individuals age exponentially into the next age class with the rate of aging equal to the inverse of the time spent in each age class. The duration of the oldest age class was set to 20 years. The net migration rate was applied uniformly across age classes. We used an expanded version of the contact matrix described by Mossong et al to define contacts between age classes. 
 
@@ -82,7 +85,8 @@ Assumptions when fitting contact reductions:
 
 After completing parts 1 and 2 of the calibration step, you will have a figure that looks like this: 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/08c3d85f-78ec-4203-a02a-68013e36ae75" width="80%" height="80%" align="center">
+![eFigure6](https://github.com/user-attachments/assets/c27ea29a-ed46-4487-85e2-308cb51bb718)
+
 
 After fitting these 11 parameters the script uses Latin Hypercube Sampling to sample parameter values from a plausible range around the fitted parameters (+/- 10%) for all parameters except (&phi;) (+/- 2%), which is more sensitive to small changes. Two versions are saved, one with 100 samples and the other with 1000 samples. These sets of parameter values will be used for estimating confidence intervals around the model projections. 
 
@@ -101,7 +105,7 @@ Scenario Overview:
 ## Infant Immunizations
 The model now assumes that a proportion of infants are born to vaccinated mothers (Mv Compartment) and a proportion of infants receive monoclonal antibodies at or shortly after birth (Mn Compartment). These infants retain the same protection against infection as the M compartment, but have additional protection against hospitalization given infection. Additionally, some infants receive a monoclonal antibody a few months after birth (N Compartment). These infants do not have any protection against infection, but they do have protection against hospitalization given infection. When the protection wanes from these compartments (Mv, Mn, N), infants move to the Si compartment. This compartment is functionally the same as the S0 compartment, but ensures that infants do not receive two interventions. 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/8c830c59-3d7d-4100-8a7d-f4f728656f62" width="50%" height="50%" align="left">
+![infants diagram](https://github.com/user-attachments/assets/1e754957-957f-4cc3-a98c-ed483de19428)
 
 
 |Parameter|Optimistic Value|Pessimistic Value|
@@ -116,7 +120,7 @@ The model now assumes that a proportion of infants are born to vaccinated mother
 ## Senior Vaccination 
 The vaccination compartment (Vs1) draws seniors from the S3 compartment. Current data suggests that the vaccine is effective for at least 2 seasons. Seniors spend approximately 1 year in the Vs1 compartment before waning to the Vs2 compartment for another year and then returning to the S3 compartment. Because the vaccine lasts for 2 years the optimistic and pessimistic coverage for the 2024-25 season includes the observed 25% coverage during the 2023-24 season. 
 
-<img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/a569dc65-8398-4059-8782-917b27c42041" width="50%" height="50%" align="left">
+![seniors diagram](https://github.com/user-attachments/assets/7db1138e-dcf7-4748-847f-5d6032fb8cfc)
 
 
 |Parameter|Optimistic Value|Pessimistic Value|
