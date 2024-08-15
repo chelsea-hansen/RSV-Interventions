@@ -41,6 +41,7 @@ The model assumes that all infants are born into an "M" compartment (representin
 |Proportion of contacts relative to the pre-pandemic period, July 2020 - March 2021|Fitted|
 |Proportion of contacts relative to the pre-pandemic period, October 2021 - December 2021|Fitted|
 |Proportion of contacts relative to the pre-pandemic period, January 2022 - June 2022|Fitted|
+
 References: 1. Pitzer et al.; 2. Hodgson et al.; 3. Ohuma et al. 
 
 # Step 1 - Data Requirements 
@@ -118,7 +119,8 @@ The model now assumes that a proportion of infants are born to vaccinated mother
 |Duration or protection from maternal vaccination (days)|180|180|
 |Effectiveness of maternal vaccination against hospitalization|55%|55%|
 |Cumulative coverage of maternal vaccination|50%|30%|
-References: Fleming-Dutra et al,; Jones et al. 
+
+References: Fleming-Dutra et al.; Jones et al. 
 
 ## Senior Vaccination 
 The vaccination compartment (Vs1) draws seniors from the S3 compartment. Current data suggests that the vaccine is effective for at least 2 seasons. Seniors spend approximately 1 year in the Vs1 compartment before waning to the Vs2 compartment for another year and then returning to the S3 compartment. Because the vaccine lasts for 2 years the optimistic and pessimistic coverage for the 2024-25 season includes the observed 25% coverage during the 2023-24 season. 
@@ -131,6 +133,7 @@ The vaccination compartment (Vs1) draws seniors from the S3 compartment. Current
 |Duration of protection from vaccination (days)|730.5|730.5|
 |Effectiveness of vaccine against hospitalization|80%|80%|
 |Cumulative coverage of vaccine|40%|30%|
+
 Reference: Britton et al. 
 
 ### Notes about interventions
