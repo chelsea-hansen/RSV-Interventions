@@ -1,55 +1,59 @@
 rm(list=ls())
 library(deSolve)
 library(tidyverse)
-library(lhs)
-library(cowplot)
 library(imputeTS)
+library(lhs)
+library(bbmle)
 
 source("MSIRS_immunization_dynamics.R")
 
-
-data = readRDS("Data/fixed_parameters.rds")
+data = readRDS("DATA/fixed_parameters.rds")
 parmset = data[[1]]
 yinit=data[[2]]
 yinit.vector=data[[3]]
 
 
-time_series = readRDS("Data/rsv time series.rds") %>% filter(date<'2023-10-01') %>% 
-  mutate(rsv_rate = rsv_rate/100000*2267000)
-time_series = round(time_series$rsv_rate)
-age_dist = readRDS("Data/age_distributions.rds") %>% filter(season=="pre-pandemic")
-age_dist = age_dist$prop
+#RSV data not currently publicly available - will post when possible
+#time_series = readRDS("DATA/rsv time series.rds") %>% filter(date<'2023-10-01') %>% 
+  #mutate(hosp = round(rsv_rate/100000*2267000))
+
+#time_series = c(time_series$hosp)
+#plot(time_series)
+#age_dist_all = readRDS("DATA/age_distributions.rds") %>% 
+ # ungroup() %>% 
+  #filter(season=="pre-pandemic") 
+#age_dist = c(age_dist_all$prop)
+#age_dist
 
 
-#setting all immunizations to 0 
-parmset$monoclonal_01 =  rep(0, length(time_series) + 104)
-parmset$monoclonal_23 =  rep(0, length(time_series) + 104)
-parmset$monoclonal_45 =  rep(0, length(time_series) + 104)
-parmset$monoclonal_67 =  rep(0, length(time_series) + 104)
-parmset$maternal_vax <- rep(0, length(time_series) + 104)
-parmset$senior_vax <- rep(0, length(time_series) + 104)
+parmset$monoclonal_01 =  rep(0, length(time_series) + 104+52)
+parmset$monoclonal_23 =  rep(0, length(time_series) + 104+52)
+parmset$monoclonal_45 =  rep(0, length(time_series) + 104+52)
+parmset$monoclonal_67 =  rep(0, length(time_series) + 104+52)
+parmset$maternal_vax <- rep(0, length(time_series) + 104+52)
+parmset$senior_vax <- rep(0, length(time_series) + 104+52)
 
-fit_times <- seq(1, length(time_series) + 104, by = 1)
 
 # MLE Function ------------------------------------------------------------
 
 
-fitmodel <- function(parameters) {
+fit_bbmle <- function(protrans, amp, trans, RS, RI, RC, RA, npi1, npi2, npi3, npi4, parmset, yinit.vector, age_dist, time_series, yinit) {
   
+  fit_times <- seq(1, length(time_series) + 104, by = 1)
+  baseline.txn.rate <- exp(protrans)
+  b1 <- exp(amp)
+  phi <- (2 * pi * (exp(trans))) / (1 + exp(trans))
   
-  baseline.txn.rate <- exp(parameters[1])
-  b1 <- exp(parameters[2])
-  phi <- (2 * pi * (exp(parameters[3]))) / (1 + exp(parameters[3]))
+  report_seniors <- 1 / (1 + exp(-RS))
+  report_infants <- 1 / (1 + exp(-RI))
+  report_children <- 1 / (1 + exp(-RC))
+  report_adults <- 1 / (1 + exp(-RA))
   
-  report_seniors <- 1 / (1 + exp(-parameters[4]))
-  report_infants <- 1 / (1 + exp(-parameters[5]))
-  report_children <- 1 / (1 + exp(-parameters[6]))
-  report_adults <- 1 / (1 + exp(-parameters[7]))
+  npi1f = 1/(1+exp(-npi1))
+  npi2f = 1/(1+exp(-npi2))
   
-  npi1 = 1/(1+exp(-parameters[8]))
-  npi2 = 1/(1+exp(-parameters[9]))
-  npi3 = 1/(1+exp(-parameters[10]))
-  npi4 = 1/(1+exp(-parameters[11]))
+  npi3f = 1/(1+exp(-npi3))
+  npi4f = 1/(1+exp(-npi4))
  
   #fit a new reporting rate during the pandemic 
   
@@ -59,7 +63,7 @@ fitmodel <- function(parameters) {
   introductions = introductions$intros
   parmset$introductions = introductions
   
-  npi = data.frame(npis=c(rep(1,248),rep(npi1,13),rep(npi2,39),rep(NA,26),rep(npi3,13),rep(npi4,26),rep(NA,13),rep(1,52)))%>% 
+  npi = data.frame(npis=c(rep(1,248),rep(npi1f,13),rep(npi2f,39),rep(NA,26),rep(npi3f,13),rep(npi4f,26),rep(NA,13),rep(1,52)))%>% 
     mutate(npis= na_interpolation(npis, method="linear"))
   npi=npi$npis
   parmset$npi = npi
@@ -123,46 +127,44 @@ fitmodel <- function(parameters) {
   H2 <- cbind(H1[, 1], H1[, 2], H1[, 3], H1[, 4], H1[, 5], H1[, 6], rowSums(H1[, 7:8]), rowSums(H1[, 9:12]), H1[, 13])
   age_dist2 <- colSums(H2[1:144,])
   
- 
+  
   LLall <- sum(dpois(x = time_series, lambda = H, log = TRUE))
   LLmulti <- dmultinom(x = age_dist2, prob = age_dist, log = TRUE)
   
   LL <- LLall + LLmulti
   
-  return(LL) # Return negative log-likelihood for mle2
+  return(-LL) # Return negative log-likelihood for mle2
 }
 
+start_params <- list(protrans = 2.12, amp = -2.14, trans = 2.04, RS=-5.93,RI=-2.42,RC=-4.23,RA=-8.42,npi1=.23,npi2=.84,npi3=.99,npi4=.31)
+lower_bound = list(protrans=2,amp=-2.4,trans=1.7,RS=-10,RI=-10,RC=-10,RA=-10,npi1=-10,npi2=-10,npi3=-10,npi4=-10)
+upper_bound = list(protrans=2.9,amp=-1.2,trans=2.10,RS=-2,RI=-2,RC=-2,RA=-2,npi1=10,npi2=10,npi3=10,npi4=10)
 
-start_params <-  c(2.12,-2.14,2.04,-5.93,-2.42,-4.23,-8.42,0.23,0.84,0.99,0.31)
-lower_bound = c(2,-2.4,1.7,-10,-10,-10,-10,-10,-10,-10,-10)
-upper_bound = c(2.7,-1.2,2.10,-2,-2,-2,-2,10,10,10,10)
+# Fit the model using mle2
+fit <- mle2(minuslogl = fit_bbmle, 
+            start = start_params, 
+            lower = lower_bound,
+            upper=upper_bound,
+            method="L-BFGS-B",
+            control=list(maxit=5000),
+            data = list(parmset = parmset, yinit.vector = yinit.vector, age_dist = age_dist, time_series = time_series, yinit = yinit))
 
-
-
-fitLL <- optim(par = start_params,
-               fn = fitmodel,        # the distance function to optimize
-              # dat = round(time_series$rsv_rate/100000*2267000),  # the dataset to fit to (dpois function)
-               lower = lower_bound,
-               upper = upper_bound,
-               method = "L-BFGS-B",
-               control = list(fnscale=-1, maxit=6000,trace=1,REPORT=10))
-
-saveRDS(fitLL,"Data/fit_13Aug2024.rds")
-baseline.txn.rate = exp(fitLL$par[1])
-b1 = exp(fitLL$par[2])
-phi <- (2 * pi * (exp(fitLL$par[3]))) / (1 + exp(fitLL$par[3]))
-
-report_seniors <- 1 / (1 + exp(-fitLL$par[4]))
-report_infants <- 1 / (1 + exp(-fitLL$par[5]))
-report_children <- 1 / (1 + exp(-fitLL$par[6]))
-report_adults <- 1 / (1 + exp(-fitLL$par[7]))
-
-npi1 = 1/(1+exp(-fitLL$par[8]))
-npi2 = 1/(1+exp(-fitLL$par[9]))
-npi3 = 1/(1+exp(-fitLL$par[10]))
-npi4 = 1/(1+exp(-fitLL$par[11]))
+saveRDS(fit,"DATA/fitted_parameters.rds")
+estimates = coef(fit)
+baseline.txn.rate <- exp(estimates[1])
+b1 <- exp(estimates[2])
+phi <- (2 * pi * (exp(estimates[3]))) / (1 + exp(estimates[3]))
 
 
+report_seniors <- 1 / (1 + exp(-estimates[4]))
+report_infants <- 1 / (1 + exp(-estimates[5]))
+report_children <- 1 / (1 + exp(-estimates[6]))
+report_adults <- 1 / (1 + exp(-estimates[7]))
+
+npi1 <- 1 / (1 + exp(-estimates[8]))
+npi2 <- 1 / (1 + exp(-estimates[9]))
+npi3 <- 1 / (1 + exp(-estimates[10]))
+npi4 <- 1 / (1 + exp(-estimates[11]))
 
 introductions = data.frame(intros=c(rep(parmset$seed,248),rep(0,44),rep(NA,24),rep(parmset$seed,114))) %>% 
   mutate(intros = na_interpolation(intros, method="linear"))
@@ -174,8 +176,10 @@ npi = data.frame(npis=c(rep(1,248),rep(npi1,13),rep(npi2,39),rep(NA,26),rep(npi3
 npi=npi$npis
 parmset$npi = npi
 
-
-results <- ode(y = yinit.vector, method = "ode45", t = fit_times, func = MSIRS_immunization_dynamics, parms = c(parmset, baseline.txn.rate = baseline.txn.rate, b1 = b1, phi = phi))
+fit_times <- seq(1, length(time_series) + 104, by = 1)
+results <- ode(y = yinit.vector, method = "ode45", times = fit_times, 
+               func = MSIRS_immunization_dynamics, 
+               parms = c(parmset, baseline.txn.rate = baseline.txn.rate, b1 = b1, phi = phi))
 
 t0 <- length(time_series)
 al <- nrow(yinit)
@@ -185,10 +189,6 @@ I1 <- St[, grep('I1', colnames(St))]
 I2 <- St[, grep('I2', colnames(St))]
 I3 <- St[, grep('I3', colnames(St))]
 I4 <- St[, grep('I4', colnames(St))]
-R1 <- St[, grep('R1', colnames(St))]
-R2 <- St[, grep('R2', colnames(St))]
-R3 <- St[, grep('R3', colnames(St))]
-R4 <- St[, grep('R4', colnames(St))]
 S1 <- St[, grep('S1', colnames(St))]
 S2 <- St[, grep('S2', colnames(St))]
 S3 <- St[, grep('S3', colnames(St))]
@@ -204,13 +204,13 @@ Vs2 <- St[, grep('Vs2', colnames(St))]
 beta <- baseline.txn.rate / (parmset$dur.days1 / 7) / (sum(yinit)^(1 - parmset$q)) * parmset$c2
 
 lambda1 <- matrix(0, nrow = t0, ncol = 13)
-
 for (t in 1:t0) {
   lambda1[t, ] <- as.vector((1 + b1 * cos(2 * pi * (t - phi * 52.1775) / 52.1775)) * ((I1[t, ] + parmset$rho1 * I2[t, ] + parmset$rho2 * I3[t, ] + parmset$rho2 * I4[t, ] + parmset$seed) %*% beta) / sum(St[t, ]))
 }
 
+
 hosp1 <- c(report_infants, report_infants*0.59, report_infants*0.33, report_infants*0.2, report_infants*0.15, report_infants*0.15, rep(report_children, 2), rep(.001, 5))
-hosp2 <- hosp1 * 0.4
+hosp2 = hosp1*.4
 hosp3 <- c(rep(0.001, 8), rep(report_adults, 4), report_seniors)
 
 H1 <- matrix(0, nrow = t0, ncol = al)
@@ -229,22 +229,26 @@ for (i in 1:al) {
     hosp3[i] * parmset$sigma3 * Vs2[, i] * lambda1[, i]
 }
 
-H <- rowSums(H1)
-plot(H)
-H2 <- cbind(H1[, 1], H1[, 2], H1[, 3], H1[, 4], H1[, 5], H1[, 6], rowSums(H1[, 7:8]), rowSums(H1[, 9:12]), H1[, 13])
-age_dist2 <- colSums(H2[1:144,])
-age_dist2/sum(age_dist2)
+Ha <- rowSums(H1)
+plot(Ha)
+dates1 = seq(from=as.Date('2017-07-02'),to=as.Date('2023-09-30'),by='week')
+time_seriesa = time_series
 
-
+plot(time_seriesa)
 plotA = ggplot()+
   theme_bw()+
-  geom_area(aes(x=1:326,y=time_series/22.67),fill="grey")+
-  geom_line(aes(x=1:326,y=H/22.67),color="blue",size=1)+
-  geom_line(aes(x=1:326,y=npi[105:430]*10),color="black",size=1)+
+  geom_area(aes(x=dates1,y=time_seriesa/22.65),fill="grey")+
+  geom_line(aes(x=dates1,y=Ha/22.65),color="blue",size=1)+
+  geom_line(aes(x=dates1,y=npi[105:430]*10),color="black",size=1)+
   labs(x=NULL, y="RSV Hospitalization Rate")#+
-
+#  scale_y_continuous(name="Hosp Rate",sec.axis = sec_axis( trans=~.*10, name="% of Contacts"))
 plotA
-
+#ggsave(plot=plotA,"eFigure6.png",height=5,width=9,units="in")
+  
+H2= cbind(H1[,1],H1[,2],H1[,3],H1[,4],H1[,5],H1[,6],rowSums(H1[,7:8]),rowSums(H1[,9:12]),H1[,13])
+aged = colSums(H2[1:144,])/sum(H2[1:144,])
+round(aged,2)
+age_dist
 
 infections=matrix(0,nrow=t0,ncol=al)#Number of infections by age
 for (i in 1:al){
@@ -262,13 +266,14 @@ attack
 
 
 
-# Latin Hypercube Sampling  -----------------------------------------------
 
+# Add confidence intervals with Latin Hypercube Sampling --------------------------------------------
 parms = c(baseline.txn.rate,b1,phi, report_seniors,report_infants,report_children,report_adults,npi1, npi2, npi3, npi4)
 
 conf_int = cbind(parms*.9,parms*1.1)
-conf_int[3,2] = phi*1.03
-conf_int[3,1] = phi*0.97
+#Less noise for Phi parameter which is more sensitive to small changes 
+conf_int[3,2] = phi*1.02
+conf_int[3,1] = phi*0.98
 conf_int
 
 
@@ -287,7 +292,7 @@ new_parms <- cbind(
   npi3 = lhs[,6]*(conf_int[10,2]-conf_int[10,1])+conf_int[10,1],
   npi4 = lhs[,6]*(conf_int[11,2]-conf_int[11,1])+conf_int[11,1])
 
-saveRDS(new_parms,"Data/parameters_13Aug_100.rds")
+saveRDS(new_parms,"DATA/fitted_parameters_100.rds")
 
 
 h=1000
@@ -305,8 +310,6 @@ new_parms <- cbind(
   npi3 = lhs[,6]*(conf_int[10,2]-conf_int[10,1])+conf_int[10,1],
   npi4 = lhs[,6]*(conf_int[11,2]-conf_int[11,1])+conf_int[11,1])
 
-saveRDS(new_parms,"Data/parameters_13Aug_1000.rds")
-
-
+saveRDS(new_parms,"DATA/fitted_parameters_1000.rds")
 
 
