@@ -21,13 +21,13 @@ The model assumes that all infants are born into an "M" compartment (representin
 |<sup>1</sup>Duration of infectiousness - first infection (1/&gamma;<sub>1</sub>)|10 days|
 |<sup>1</sup>Duration of infectiousness - second infection (1/&gamma;<sub>2</sub>)|7 days|
 |<sup>1</sup>Duration of infectiousness - third or later infection (1/&gamma;<sub>3</sub>)|5 days|
-||<sup>3</sup>Relative risk of infection following first infection (&sigma;<sub>1</sub>)|0.89|
-||<sup>3</sup>Relative risk of infection following second infection (&sigma;<sub>2</sub>)|0.72|
-||<sup>3</sup>Relative risk of infection following third or later infection (&sigma;<sub>3</sub>)|0.24|
+|<sup>3</sup>Relative risk of infection following first infection (&sigma;<sub>1</sub>)|0.89|
+|<sup>3</sup>Relative risk of infection following second infection (&sigma;<sub>2</sub>)|0.72|
+|<sup>3</sup>Relative risk of infection following third or later infection (&sigma;<sub>3</sub>)|0.24|
 |Relative risk of infection with maternal immunity (same as RR following third infection) (&sigma;<sub>3</sub>)|0.24|
 |<sup>1</sup>Duration of maternal immunity (1/&omega;<sub>1</sub>)|112 days|
-||<sup>4</sup>Duration of immunity following first and second infections (1/&omega;<sub>2</sub>)|182.625 days|
-||<sup>3</sup>Duration of immunity following third or later infections (1/&omega;<sub>3</sub>)|358.9 days|
+|<sup>4</sup>Duration of immunity following first and second infections (1/&omega;<sub>2</sub>)|182.625 days|
+|<sup>3</sup>Duration of immunity following third or later infections (1/&omega;<sub>3</sub>)|358.9 days|
 |<sup>1</sup>Relative infectiousness - second infections (&rho;<sub>1</sub>)|0.75|
 |<sup>1</sup>Relative infectiousness - third or later infections (&rho;<sub>2</sub>)|0.51|
 |Baseline transmission rate (&beta;)|Fitted|
