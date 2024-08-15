@@ -105,22 +105,16 @@ The model now assumes that a proportion of infants are born to vaccinated mother
 
 
 |Parameter|Optimistic Value|Pessimistic Value|
-|---------|----------------|-----------------|
-|Duration of protection from monoclonal antibodies (days)|180|180|
-|Effectiveness of monoclonal antibodies against hospitalization|80%|60%|
-|Cumulative coverage of monoclonal antibodies|user defined|user defined|
+|---------|----------------|----|
+|Duration of protection from monoclonal antibodies (days)|150|150|
+|Effectiveness of monoclonal antibodies against hospitalization|80%|80%|
+|Cumulative coverage of monoclonal antibodies|75%|25%|
 |Duration or protection from maternal vaccination (days)|180|180|
-|Effectiveness of maternal vaccination against hospitalization|70%|50%|
-|Cumulative coverage of maternal vaccination|user defined|user defined| 
-
-Clinical trials
-
-Monoclonal antibodies: (Hammitt et al, 2022) https://www.nejm.org/doi/full/10.1056/NEJMoa2110275
-
-Maternal Vaccination: (Kampmann et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2216480
+|Effectiveness of maternal vaccination against hospitalization|55%|55%|
+|Cumulative coverage of maternal vaccination|50%|30%|
 
 ## Senior Vaccination 
-The vaccination compartment (Vs1) draws seniors from the S3 and R4 compartments. Current data suggests that the vaccine is effective for at least 2 seasons. Seniors spend approximately 1 year in the Vs1 compartment before waning to the Vs2 compartment for another year and then returning to the S3 compartment. 
+The vaccination compartment (Vs1) draws seniors from the S3 compartment. Current data suggests that the vaccine is effective for at least 2 seasons. Seniors spend approximately 1 year in the Vs1 compartment before waning to the Vs2 compartment for another year and then returning to the S3 compartment. Because the vaccine lasts for 2 years the optimistic and pessimistic coverage for the 2024-25 season includes the observed 25% coverage during the 2023-24 season. 
 
 <img src="https://github.com/chelsea-hansen/RSV-Interventions/assets/81387982/a569dc65-8398-4059-8782-917b27c42041" width="50%" height="50%" align="left">
 
@@ -128,14 +122,8 @@ The vaccination compartment (Vs1) draws seniors from the S3 and R4 compartments.
 |Parameter|Optimistic Value|Pessimistic Value|
 |---------|----------------|-----------------|
 |Duration of protection from vaccination (days)|730.5|730.5|
-|Effectiveness of vaccine against hospitalization|90%|70%|
-|Cumulative coverage of vaccine|user defined|user defined|
-
-Clinical trials
-
-(Walsh et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2213836
-
-(Papi et al, 2023) https://www.nejm.org/doi/full/10.1056/NEJMoa2209604
+|Effectiveness of vaccine against hospitalization|80%|80%|
+|Cumulative coverage of vaccine|40%|30%|
 
 
 ### Notes about interventions
@@ -143,11 +131,12 @@ The model assumes that interventions are providing protection against severe dis
 
 
 # Step 4 - Visualization 
-Visualize your results in the Shiny App! Code is provided in the ```RSV-Scenarios-Shiny-App``` folder and a working example is available [here](https://chelsea-doing-epi.shinyapps.io/rsv-app/).
-After you have run the code in the ```3. Interventions``` folder and saved the results, launch the Shiny App by opening the ```app.R``` script in the ```RSV-Scenarios-Shiny-App``` folder and selecting the green triangle "Run App" in the top right corner of the R Script window. 
+Visualize your results in the Shiny App! Code is provided in the ```RSV-Scenarios-Shiny-App``` folder and a working example is available [here](https://chelsea-doing-epi.shinyapps.io/RSV-Scenarios-Shiny-App/).
+After you have run the ```3.scenario_projections``` R script, save the results in the ```RSV-Scenarios-Shiny-App``` folder (examples already included). Launch the Shiny App by opening the ```app.R``` script in the ```RSV-Scenarios-Shiny-App``` folder and selecting the green triangle "Run App" in the top right corner of the R Script window. 
 
 # References
 Pitzer VE, Viboud C, Alonso WJ, et al. "Environmental Drivers of the Spatiotemporal Dynamics of Respiratory Syncytial Virus in the United States". PLOS Pathogens. 2015. https://doi.org/10.1371/journal.ppat.1004591
+
 Zheng Z, Weinberger DM, Pitzer VE. "Predicted effectiveness of vaccines and extended half-life monoclonal antibodies against RSV hospitalizations in children". NJP Vaccines. 2022. https://doi.org/10.1038/s41541-022-00550-5
 
 # Notes 
